@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiDinero - Finanzas Minimalistas</title>
+    <title>MyFinances - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,7 +29,7 @@
             backdrop-filter: blur(4px);
         }
 
-      
+        /* Chart */
         .chart-container {
             position: relative;
             width: 260px;
@@ -48,6 +48,7 @@
         /* Botones Flotantes */
         .fab-btn { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s; }
         .fab-btn:active { transform: scale(0.9); }
+        .fab-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
         /* Anillo de categorías */
         .category-ring {
@@ -201,23 +202,42 @@
         </div>
 
         <div id="screen-main" class="absolute inset-0 z-0 bg-green-50/30 hidden flex flex-col">
-            <!-- Header -->
+            <!-- Header con Historial de Meses -->
             <header class="bg-white px-6 py-4 flex justify-between items-center shadow-sm border-b border-gray-100 z-20 relative">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
                         <i class="fa-solid fa-leaf text-lg"></i>
                     </div>
-                    <div>
-                        <h2 class="font-bold text-gray-800 leading-tight">MiDinero</h2>
-                        <span class="text-xs text-emerald-600 font-medium" id="current-month-display">Cargando...</span>
+                    <div class="relative custom-select-wrapper w-32">
+                        <!-- Dropdown de Meses -->
+                        <div class="flex items-center gap-1 cursor-pointer py-1 px-2 -ml-2 rounded-lg hover:bg-gray-50 transition" onclick="toggleMonthSelect()">
+                            <div>
+                                <h2 class="font-bold text-gray-800 leading-tight">MiDinero</h2>
+                                <span class="text-xs text-emerald-600 font-medium flex items-center gap-1" id="current-month-display">
+                                    Cargando... <i class="fa-solid fa-chevron-down text-[10px]"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <!-- Lista de meses pasados -->
+                        <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl w-48 -left-2" id="month-options-list">
+                            <!-- Llenado dinámicamente -->
+                        </div>
                     </div>
                 </div>
-                <div class="flex gap-2">
+                <div class="flex gap-2 items-center">
+                    <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-emerald-200 mr-2 transition-all hover:bg-emerald-200">
+                        Volver
+                    </button>
                     <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full transition">
                         <i class="fa-solid fa-gear text-lg"></i>
                     </button>
                 </div>
             </header>
+            
+            <!-- Aviso de Solo Lectura -->
+            <div id="readonly-warning" class="hidden bg-amber-100 text-amber-800 text-xs font-bold py-1 px-4 text-center z-10 border-b border-amber-200 shadow-sm flex items-center justify-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left"></i> Estás viendo un mes pasado (Solo Lectura)
+            </div>
 
             <!-- Grafico Central -->
             <main class="flex-1 relative overflow-hidden flex flex-col items-center justify-center">
@@ -237,7 +257,7 @@
                 </div>
             </main>
 
-            <div class="bg-white pt-4 pb-8 rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-10 border-t border-gray-100">
+            <div class="bg-white pt-4 pb-8 rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-10 border-t border-gray-100 relative">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-gray-100 text-gray-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-gray-200 transition-colors duration-500">
                         Saldo: <span id="balance-total">$0.00</span>
@@ -254,7 +274,7 @@
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     
-                    <button onclick="openGoalsModal()" class="fab-btn w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-md border border-emerald-100 z-10" title="Editar Metas">
+                    <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-md border border-emerald-100 z-10" title="Editar Metas">
                         <i class="fa-solid fa-bullseye text-xl"></i>
                     </button>
 
@@ -338,7 +358,7 @@
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
                         <div class="custom-select-wrapper">
-                            <div class="custom-select bg-gray-50 border-0 py-3 rounded-2xl" id="custom-select-trigger" onclick="toggleCustomSelect()">
+                            <div class="custom-select bg-gray-50 border-0 py-3 rounded-2xl" id="custom-select-trigger" onclick="toggleCatSelect()">
                                 <div class="flex items-center gap-3" id="custom-select-display">
                                     <span class="text-gray-400">Selecciona...</span>
                                 </div>
@@ -548,21 +568,17 @@
         import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // =====================================================================
-        // 🚀 PASO 1: PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE CONSOLE
+        // 🔥 AQUI CORREGIMOS EL ERROR (Una sola declaración limpia)
         // =====================================================================
         const firebaseConfig = {
-  apiKey: "AIzaSyDOf1RSIu3p309DXiylW6oAzIrjm5FZwC8",
-  authDomain: "app-idk-61fda.firebaseapp.com",
-  projectId: "app-idk-61fda",
-  storageBucket: "app-idk-61fda.firebasestorage.app",
-  messagingSenderId: "191208089010",
-  appId: "1:191208089010:web:139005e852bfa01dfbb0ab"
-};
-
-        // =====================================================================
-        // Configuración de Entorno (No tocar, permite compatibilidad cruzada)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : myFirebaseConfig;
-        const appIdStr = typeof __app_id !== 'undefined' ? __app_id : 'finanzas-minimalista-v1';
+            apiKey: "AIzaSyDOf1RSIu3p309DXiylW6oAzIrjm5FZwC8",
+            authDomain: "app-idk-61fda.firebaseapp.com",
+            projectId: "app-idk-61fda",
+            storageBucket: "app-idk-61fda.firebasestorage.app",
+            messagingSenderId: "191208089010",
+            appId: "1:191208089010:web:139005e852bfa01dfbb0ab"
+        };
+        const appIdStr = 'finanzas-minimalista-v1';
         
         let app, db, auth;
         try {
@@ -571,10 +587,9 @@
             auth = getAuth(app);
         } catch(e) {
             console.error("Firebase Auth no configurado aún o API Key inválida.", e);
-            document.getElementById('screen-loading').innerHTML = '<div class="text-center p-6"><i class="fa-solid fa-triangle-exclamation text-rose-500 text-5xl mb-4"></i><p class="font-bold">Falta configurar Firebase</p><p class="text-xs text-gray-500 mt-2">Pega tus credenciales en el bloque script del archivo.</p></div>';
+            document.getElementById('screen-loading').innerHTML = '<div class="text-center p-6"><i class="fa-solid fa-triangle-exclamation text-rose-500 text-5xl mb-4"></i><p class="font-bold">Error en Firebase</p><p class="text-xs text-gray-500 mt-2">Revisa la consola.</p></div>';
         }
 
-        // --- ESTADO GLOBAL ---
         window.appState = {
             user: null,
             data: {
@@ -583,13 +598,14 @@
                 goals: { monthly: 0, annual: 0 },
                 currentMonthId: ''
             },
-            transactions: [] // Memoria local para filtrar
+            transactions: [],
+            viewingMonthId: null
         };
+        
         let currentChart = null;
         let unsubscribeData = null;
         let unsubscribeTrans = null;
 
-        // --- ICONOS ---
         const availableIcons = [
             'fa-basket-shopping', 'fa-cart-shopping', 'fa-house', 'fa-couch', 'fa-bolt', 'fa-wifi', 'fa-droplet',
             'fa-car', 'fa-bus', 'fa-plane', 'fa-gas-pump', 'fa-utensils', 'fa-burger', 'fa-martini-glass-citrus',
@@ -625,16 +641,6 @@
             setupIconSelectors();
             setupComboListeners();
 
-            // Lógica entorno colaborativo vs standalone
-            const customToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-            if (customToken) {
-                try {
-                    await signInWithCustomToken(auth, customToken);
-                } catch (e) {
-                    console.warn("Fallo custom token, escuchando estado normal", e);
-                }
-            }
-
             onAuthStateChanged(auth, async (user) => {
                 const loader = document.getElementById('screen-loading');
                 if (user) {
@@ -658,7 +664,6 @@
             const docSnap = await getDoc(mainRef);
             
             if (!docSnap.exists()) {
-                // Nuevo usuario
                 const d = new Date();
                 const currentMonthId = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
                 const initialData = {
@@ -666,7 +671,7 @@
                     fixedExpenses: [],
                     goals: { monthly: 0, annual: 0 },
                     currentMonthId: currentMonthId,
-                    profile: { name: window.appState.user.displayName || 'Usuario' } // name if available
+                    profile: { name: window.appState.user.displayName || 'Usuario' }
                 };
                 await setDoc(mainRef, initialData);
                 window.appState.data = initialData;
@@ -674,23 +679,29 @@
                 window.appState.data = docSnap.data();
             }
 
-            // Escuchar cambios en doc principal
+            window.appState.viewingMonthId = window.appState.data.currentMonthId;
+
             unsubscribeData = onSnapshot(getMainDocRef(), (snapshot) => {
                 if (snapshot.exists()) {
                     window.appState.data = snapshot.data();
                     document.getElementById('sidebar-user-name').innerText = window.appState.data.profile?.name || 'Usuario';
+                    
+                    if(!window.appState.viewingMonthId || window.appState.viewingMonthId === snapshot.data().currentMonthId) {
+                        window.appState.viewingMonthId = snapshot.data().currentMonthId;
+                    }
+                    
                     window.updateDashboardUI();
                     window.renderSidebarCategories();
                     window.updateMonthDisplay();
                 }
             }, (error) => console.error("Error snapshot data:", error));
 
-            // Escuchar cambios en transacciones (Query simple sin filtros complejos por requerimiento)
             unsubscribeTrans = onSnapshot(getTransColRef(), (snapshot) => {
                 const trans = [];
                 snapshot.forEach(doc => trans.push({ id: doc.id, ...doc.data() }));
                 window.appState.transactions = trans;
                 window.updateDashboardUI();
+                window.updateMonthDisplay();
             }, (error) => console.error("Error snapshot trans:", error));
         }
 
@@ -702,7 +713,7 @@
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
-            const docNum = document.getElementById('reg-doc').value; // Lo guardamos en profile
+            const docNum = document.getElementById('reg-doc').value; 
             const email = document.getElementById('reg-email').value;
             const pass1 = document.getElementById('reg-pass').value;
             const pass2 = document.getElementById('reg-pass-confirm').value;
@@ -714,7 +725,6 @@
             
             try {
                 const cred = await createUserWithEmailAndPassword(auth, email, pass1);
-                // Inicializar profile con DNI
                 const d = new Date();
                 const initialData = {
                     categories: defaultCategories,
@@ -791,7 +801,7 @@
                 }
                 setTimeout(() => modal.classList.add('hidden'), 200);
             } else modal.classList.add('hidden');
-            if(id === 'modal-transaction') window.closeCustomSelect();
+            if(id === 'modal-transaction') window.closeCatSelect();
         }
 
         window.toggleSidebar = () => {
@@ -808,34 +818,135 @@
             }
         }
 
-        window.updateMonthDisplay = () => {
-            const current = window.appState.data?.currentMonthId;
-            if(!current) return;
-            const parts = current.split('-');
-            const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-            document.getElementById('current-month-display').innerText = `${meses[parseInt(parts[1])-1]} ${parts[0]}`;
+        function getAvailableMonths() {
+            const data = window.appState.data;
+            if(!data) return [];
+            
+            const monthsSet = new Set();
+            monthsSet.add(data.currentMonthId); 
+            
+            window.appState.transactions.forEach(t => {
+                if(t.monthId) monthsSet.add(t.monthId);
+            });
+            
+            return Array.from(monthsSet).sort().reverse();
         }
+
+        function formatMonthName(monthId) {
+            const parts = monthId.split('-');
+            const meses = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+            return `${meses[parseInt(parts[1])-1]} ${parts[0]}`;
+        }
+
+        window.updateMonthDisplay = () => {
+            const viewingMonth = window.appState.viewingMonthId;
+            if(!viewingMonth) return;
+            
+            document.getElementById('current-month-display').innerHTML = `${formatMonthName(viewingMonth)} <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
+            
+            const months = getAvailableMonths();
+            const list = document.getElementById('month-options-list');
+            list.innerHTML = '';
+            
+            months.forEach(m => {
+                const isCurrent = m === window.appState.data.currentMonthId;
+                const isSelected = m === viewingMonth;
+                list.insertAdjacentHTML('beforeend', `
+                    <div class="custom-option ${isSelected ? 'bg-emerald-50' : ''}" onclick="selectMonth('${m}')">
+                        <div class="flex items-center justify-between w-full">
+                            <span class="font-medium ${isSelected ? 'text-emerald-700 font-bold' : 'text-gray-700'}">${formatMonthName(m)} ${isCurrent ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded ml-1">Actual</span>' : ''}</span>
+                            ${isSelected ? '<i class="fa-solid fa-check text-emerald-500 text-xs"></i>' : ''}
+                        </div>
+                    </div>
+                `);
+            });
+
+            const isReadOnly = viewingMonth !== window.appState.data.currentMonthId;
+            const readonlyWarning = document.getElementById('readonly-warning');
+            const btnReturn = document.getElementById('btn-return-current');
+            
+            const fabExpense = document.getElementById('btn-expense');
+            const fabIncome = document.getElementById('btn-income');
+            const fabGoals = document.getElementById('btn-goals');
+            
+            if(isReadOnly) {
+                readonlyWarning.classList.remove('hidden');
+                btnReturn.classList.remove('hidden');
+                fabExpense.classList.add('disabled');
+                fabIncome.classList.add('disabled');
+                fabGoals.classList.add('disabled');
+            } else {
+                readonlyWarning.classList.add('hidden');
+                btnReturn.classList.add('hidden');
+                fabExpense.classList.remove('disabled');
+                fabIncome.classList.remove('disabled');
+                fabGoals.classList.remove('disabled');
+            }
+        }
+
+        window.toggleMonthSelect = () => {
+            const list = document.getElementById('month-options-list');
+            if (list.classList.contains('open')) window.closeMonthSelect();
+            else { list.style.display = 'block'; void list.offsetWidth; list.classList.add('open'); }
+        }
+        
+        window.closeMonthSelect = () => {
+            const list = document.getElementById('month-options-list');
+            if(list?.classList.contains('open')){
+                list.classList.remove('open');
+                setTimeout(() => { if(!list.classList.contains('open')) list.style.display = 'none'; }, 200);
+            }
+        }
+
+        window.selectMonth = (monthId) => {
+            window.appState.viewingMonthId = monthId;
+            window.updateDashboardUI();
+            window.updateMonthDisplay();
+            window.closeMonthSelect();
+        }
+
+        window.returnToCurrentMonth = () => {
+            window.appState.viewingMonthId = window.appState.data.currentMonthId;
+            window.updateDashboardUI();
+            window.updateMonthDisplay();
+        }
+
+        document.addEventListener('click', (e) => {
+            const monthWrapper = document.querySelector('.custom-select-wrapper.w-32');
+            if (monthWrapper && !monthWrapper.contains(e.target)) window.closeMonthSelect();
+            
+            const catWrapper = document.querySelector('#form-transaction .custom-select-wrapper');
+            if (catWrapper && !catWrapper.contains(e.target)) window.closeCatSelect();
+        });
 
         window.updateDashboardUI = () => {
             if(!window.appState.data || !window.appState.transactions) return;
             
             const data = window.appState.data;
+            const viewingMonth = window.appState.viewingMonthId || data.currentMonthId;
+            
             let totalIncome = 0; let totalExpense = 0;
             const expenseDataByCategory = {};
 
             data.categories.expense.forEach(c => expenseDataByCategory[c.name] = { amount: 0, color: c.color });
-            data.fixedExpenses.forEach(f => expenseDataByCategory[f.name] = { amount: 0, color: f.color });
+            
+            if (viewingMonth === data.currentMonthId) {
+                data.fixedExpenses.forEach(f => expenseDataByCategory[f.name] = { amount: 0, color: f.color });
+            }
+            
             expenseDataByCategory['Saldo Mes Anterior'] = { amount: 0, color: 'text-slate-600' };
 
-            // Filtrado local en memoria
-            const currentMonthTransactions = window.appState.transactions.filter(t => t.monthId === data.currentMonthId);
+            const monthTransactions = window.appState.transactions.filter(t => t.monthId === viewingMonth);
 
-            currentMonthTransactions.forEach(t => {
+            monthTransactions.forEach(t => {
                 if (t.type === 'income') totalIncome += t.amount;
                 else if (t.type === 'expense') {
                     totalExpense += t.amount;
-                    if(expenseDataByCategory[t.categoryName]) expenseDataByCategory[t.categoryName].amount += t.amount;
-                    else expenseDataByCategory[t.categoryName] = { amount: t.amount, color: 'text-slate-600' };
+                    if(expenseDataByCategory[t.categoryName]) {
+                        expenseDataByCategory[t.categoryName].amount += t.amount;
+                    } else {
+                        expenseDataByCategory[t.categoryName] = { amount: t.amount, color: 'text-slate-600' };
+                    }
                 }
             });
 
@@ -850,7 +961,6 @@
 
             const badge = document.getElementById('balance-badge');
             const icon = document.getElementById('status-icon');
-            const gif = document.getElementById('status-gif');
             
             if (balance > 0) {
                 badge.className = "bg-emerald-100 text-emerald-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-emerald-200 transition-colors";
@@ -879,6 +989,7 @@
                 }
             }
             if (!hasData) { labels.push('Sin gastos'); dataValues.push(1); backgroundColors.push('#f1f5f9'); }
+            
             if (currentChart) currentChart.destroy();
 
             currentChart = new Chart(ctx, {
@@ -899,8 +1010,10 @@
             const ring = document.getElementById('category-ring');
             ring.innerHTML = '';
             const radius = 160; const center = { x: 130, y: 130 };
-            const limit = Math.min(categories.length, 8); // Max 8 para no saturar visualmente
+            const limit = Math.min(categories.length, 8); 
             
+            const isReadOnly = window.appState.viewingMonthId !== window.appState.data.currentMonthId;
+
             for(let i=0; i<limit; i++){
                 const cat = categories[i];
                 const angle = (i / limit) * (2 * Math.PI) - (Math.PI / 2);
@@ -909,29 +1022,34 @@
 
                 const div = document.createElement('div');
                 div.className = `cat-icon ${cat.color}`;
+                if(isReadOnly) div.style.pointerEvents = 'none'; 
+
                 div.style.left = `${x}px`; div.style.top = `${y}px`;
                 div.innerHTML = `<i class="fa-solid ${cat.icon}"></i>`;
-                div.onclick = () => window.openTransactionModal('expense', cat.id);
+                
+                if(!isReadOnly) {
+                    div.onclick = () => window.openTransactionModal('expense', cat.id);
+                }
                 ring.appendChild(div);
             }
         }
 
-        window.toggleCustomSelect = () => {
+        window.toggleCatSelect = () => {
             const list = document.getElementById('custom-options-list');
             const arrow = document.getElementById('custom-select-arrow');
-            if (list.classList.contains('open')) window.closeCustomSelect();
+            if (list.classList.contains('open')) window.closeCatSelect();
             else { list.style.display = 'block'; void list.offsetWidth; list.classList.add('open'); arrow.style.transform = 'rotate(180deg)'; }
         }
-        window.closeCustomSelect = () => {
+        
+        window.closeCatSelect = () => {
             const list = document.getElementById('custom-options-list');
+            const arrow = document.getElementById('custom-select-arrow');
             if(list?.classList.contains('open')){
-                list.classList.remove('open'); document.getElementById('custom-select-arrow').style.transform = 'rotate(0deg)';
+                list.classList.remove('open'); 
+                if(arrow) arrow.style.transform = 'rotate(0deg)';
                 setTimeout(() => { if(!list.classList.contains('open')) list.style.display = 'none'; }, 200);
             }
         }
-        document.addEventListener('click', (e) => {
-            if (!document.querySelector('.custom-select-wrapper')?.contains(e.target)) window.closeCustomSelect();
-        });
 
         window.selectCustomOption = (id, name, iconClass, colorClass) => {
             document.getElementById('trans-category').value = id;
@@ -941,10 +1059,12 @@
                 </div>
                 <span class="font-bold text-gray-700">${name}</span>
             `;
-            window.closeCustomSelect();
+            window.closeCatSelect();
         }
 
         window.openTransactionModal = (type, preselectCatId = null) => {
+            if(window.appState.viewingMonthId !== window.appState.data.currentMonthId) return; 
+
             document.getElementById('form-transaction').reset();
             document.getElementById('trans-type').value = type;
             document.getElementById('trans-category').value = '';
@@ -1202,6 +1322,8 @@
             const btnPlus = document.getElementById('btn-income');
 
             const checkCombo = () => {
+                if (window.appState.viewingMonthId !== window.appState.data.currentMonthId) return;
+
                 if (touchingPlus && touchingMinus && !window.endMonthTriggered) {
                     window.endMonthTriggered = true;
                     if (navigator.vibrate) navigator.vibrate([100, 50, 100]); 
@@ -1247,7 +1369,6 @@
             data.currentMonthId = newMonthId;
             data.goals.monthly = parseFloat(document.getElementById('end-new-goal').value) || data.goals.monthly;
 
-            // Transacciones iniciales del nuevo mes (batch simulado mediante guardado secuencial, para evitar complejidad de batch en envs)
             const initialIncome = parseFloat(document.getElementById('end-new-income').value) || 0;
             
             if (bal !== 0) {
@@ -1260,12 +1381,13 @@
                     type: 'income', amount: initialIncome, categoryId: 'initial', categoryName: 'Ingreso Inicial', note: 'Apertura de mes', date: new Date().toISOString(), monthId: newMonthId
                 });
             }
-            // Ejecutar gastos fijos automáticos
             for (const fe of data.fixedExpenses) {
                 await setDoc(doc(getTransColRef()), {
                     type: 'expense', amount: fe.amount, categoryId: 'fixed_' + fe.id, categoryName: fe.name, note: 'Gasto Fijo Automático', date: new Date().toISOString(), monthId: newMonthId
                 });
             }
+            
+            window.appState.viewingMonthId = newMonthId; 
             
             await saveMainData();
             window.closeModal('modal-end-month');
