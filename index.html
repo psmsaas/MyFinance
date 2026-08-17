@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <!-- Meta tag dinámico para colorear la barra de estado del iPhone -->
     <meta name="theme-color" id="meta-theme-color" content="#f8fafc">
     <title>MyFinance - Finanza Personal</title>
     
@@ -71,7 +70,7 @@
         }
 
         .theme-espacial {
-            /* TEMA ESPACIAL (Oscuro) */
+            /* TEMA ESPACIAL (Oscuro) basado en tu paleta */
             --brand-50: #1c1b39; --brand-100: #2e2661; --brand-200: #4a3e85; --brand-300: #6350a3;
             --brand-400: #7f569f; --brand-500: #7f569f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
@@ -91,18 +90,18 @@
         }
 
         .theme-kwai {
-            /* TEMA KWAI (Comida Pastel) */
+            /* TEMA KWAI (Comida Pastel) basado en tu paleta */
             --brand-50: #fdf2f8; --brand-100: #fce7f3; --brand-200: #fbcfe8; --brand-300: #f9a8d4;
             --brand-400: #f4abcc; --brand-500: #7f579f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
             
-            --surface-main: #f6d59b; 
+            --surface-main: #f6d59b; /* Fondo amarillo */
             --surface-card: #ffffff; 
-            --surface-hover: #c0dcc5; 
-            --surface-border: #f4abcc; 
+            --surface-hover: #c0dcc5; /* Verde pastel al hacer hover */
+            --surface-border: #f4abcc; /* Bordes rosa pastel */
             
             --text-main: #374151; 
-            --text-muted: #7f579f; 
+            --text-muted: #7f579f; /* Textos secundarios en morado */
             --text-inverse: #ffffff;
             
             --ring-bg: #ffffff;
@@ -276,6 +275,10 @@
 </head>
 <body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 overflow-hidden bg-surface-main">
 
+    <!-- Hack para iOS Safari: Rellenos de fondo para evitar líneas de colores incorrectos al rebotar -->
+    <div class="fixed top-0 left-0 w-full h-[50vh] bg-surface-main z-[-1] transition-colors duration-300 pointer-events-none"></div>
+    <div class="fixed bottom-0 left-0 w-full h-[50vh] bg-surface-card z-[-1] transition-colors duration-300 pointer-events-none"></div>
+
     <div id="app-container" class="relative w-full h-full sm:max-w-md sm:h-[850px] bg-surface-card sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
         
         <div id="screen-loading" class="absolute inset-0 z-[100] bg-surface-card flex flex-col items-center justify-center fade-in transition-colors duration-300">
@@ -283,6 +286,7 @@
             <p class="text-muted font-medium">Conectando con la nube...</p>
         </div>
 
+        <!-- PANTALLA: LOGIN -->
         <div id="screen-login" class="absolute inset-0 z-10 bg-surface-card flex flex-col p-6 overflow-y-auto hidden transition-colors duration-300">
             <div class="flex-1 flex flex-col justify-center items-center">
                 <div class="w-28 h-28 flex items-center justify-center mb-4 transform transition hover:scale-105">
@@ -315,6 +319,7 @@
             </div>
         </div>
 
+        <!-- PANTALLA: REGISTRO -->
         <div id="screen-register" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 overflow-y-auto fade-in transition-colors duration-300">
             <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -350,6 +355,7 @@
             </div>
         </div>
 
+        <!-- PANTALLA: RECUPERAR CONTRASEÑA -->
         <div id="screen-forgot" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 fade-in transition-colors duration-300">
             <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -378,37 +384,32 @@
             <div class="stars-container" id="stars-layer"></div>
             <div class="kawaii-container" id="kawaii-layer"></div>
 
-            <!-- Controles Flotantes Superiores -->
-            <div class="absolute top-0 left-0 w-full px-6 py-4 flex justify-between items-center z-20 pointer-events-none">
-                <div class="flex items-center gap-3 pointer-events-auto">
-                    <div class="relative custom-select-wrapper w-36">
-                        <!-- Dropdown de Meses -->
-                        <div class="flex items-center gap-2 cursor-pointer py-2 px-3 rounded-2xl bg-surface-card shadow-sm border border-surface transition-colors" onclick="toggleMonthSelect()">
-                            <div class="w-8 h-8 bg-brand-100 rounded-xl flex items-center justify-center p-1">
-                                <img src="logo.png" alt="MyFinances" class="w-full h-full object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-sm\'></i>'">
-                            </div>
-                            <div>
-                                <h2 class="font-bold text-main leading-none text-xs">MiDinero</h2>
-                                <span class="text-[10px] text-brand-600 font-medium flex items-center gap-1" id="current-month-display">
-                                    Cargando... <i class="fa-solid fa-chevron-down text-[8px]"></i>
-                                </span>
-                            </div>
+            <!-- Controles Flotantes Superiores (Más sutiles y respetando el Notch del iPhone) -->
+            <div class="absolute top-0 left-0 w-full px-5 pt-[max(1rem,env(safe-area-inset-top))] pb-2 flex justify-between items-center z-20 pointer-events-none">
+                <div class="flex items-center gap-3 pointer-events-auto mt-2">
+                    <div class="relative custom-select-wrapper w-auto">
+                        <!-- Dropdown de Meses: Ahora solo Logo + Mes -->
+                        <div class="flex items-center gap-2 cursor-pointer py-1.5 px-3 rounded-full bg-surface-card/90 backdrop-blur-md shadow-sm border border-surface transition-all hover:scale-105" onclick="toggleMonthSelect()">
+                            <img src="logo.png" alt="App" class="w-6 h-6 object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-sm\'></i>'">
+                            <span class="text-xs font-bold text-main flex items-center gap-1" id="current-month-display">
+                                Cargando... <i class="fa-solid fa-chevron-down text-[9px] text-muted ml-0.5"></i>
+                            </span>
                         </div>
-                        <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl w-48 left-0 mt-2 pointer-events-auto" id="month-options-list"></div>
+                        <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl w-40 left-0 mt-2 pointer-events-auto" id="month-options-list"></div>
                     </div>
                 </div>
-                <div class="flex gap-2 items-center pointer-events-auto">
+                <div class="flex gap-2 items-center pointer-events-auto mt-2">
                     <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-brand-200 transition-all hover:bg-brand-200">
                         Volver
                     </button>
-                    <!-- BOTÓN DE AJUSTES (Solo visible en PC) -->
-                    <button onclick="toggleSidebar()" class="hidden sm:flex w-10 h-10 items-center justify-center bg-surface-card text-muted hover:text-brand-500 rounded-xl border border-surface shadow-sm transition-all hover:shadow-md transform hover:scale-105" title="Abrir Menú">
-                        <i class="fa-solid fa-gear text-lg"></i>
+                    <!-- BOTÓN DE AJUSTES (Solo visible en PC, sutil y redondo) -->
+                    <button onclick="toggleSidebar()" class="hidden sm:flex w-9 h-9 items-center justify-center bg-surface-card/90 backdrop-blur-md text-muted hover:text-brand-500 rounded-full border border-surface shadow-sm transition-all hover:scale-105" title="Abrir Menú">
+                        <i class="fa-solid fa-gear text-sm"></i>
                     </button>
                 </div>
             </div>
             
-            <div id="readonly-warning" class="hidden absolute top-20 left-1/2 transform -translate-x-1/2 bg-amber-100 text-amber-800 text-xs font-bold py-1.5 px-4 rounded-full z-10 border border-amber-200 shadow-sm flex items-center justify-center gap-2 w-max">
+            <div id="readonly-warning" class="hidden absolute top-24 left-1/2 transform -translate-x-1/2 bg-amber-100 text-amber-800 text-xs font-bold py-1.5 px-4 rounded-full z-10 border border-amber-200 shadow-sm flex items-center justify-center gap-2 w-max">
                 <i class="fa-solid fa-clock-rotate-left"></i> Solo Lectura
             </div>
 
@@ -429,45 +430,51 @@
                 </div>
             </main>
 
-            <!-- AQUI: Padding inferior dinámico para rellenar la zona segura de Safari -->
-            <div class="bg-surface-card pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
+            <!-- AQUI: Tarjeta inferior reducida en altura, con botones más compactos y barras lado a lado -->
+            <div class="bg-surface-card pt-4 pb-[max(1.5rem,calc(1rem+env(safe-area-inset-bottom)))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
                         Saldo: <span id="balance-total">$0.00</span>
                     </div>
                 </div>
                 
-                <div class="flex flex-col gap-3 px-8 mb-6">
-                    <div class="flex flex-col gap-1">
-                        <div class="flex justify-between text-[10px] font-bold text-muted uppercase tracking-wider">
-                            <span>Límite Mensual</span>
+                <!-- METAS MINIMALISTAS LADO A LADO -->
+                <div class="grid grid-cols-2 gap-6 px-10 mb-4">
+                    <!-- Mes -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-[9px] font-bold text-muted uppercase tracking-wider">
+                            <span>Límite Mes</span>
                             <span id="display-goal-month-text" class="text-main">0%</span>
                         </div>
-                        <div class="progress-track">
-                            <div id="progress-fill-month" class="progress-fill" style="width: 0%;"></div>
+                        <div class="w-full h-1.5 bg-surface-main rounded-full overflow-hidden border border-surface">
+                            <div id="progress-fill-month" class="h-full bg-brand-500 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
                         </div>
                     </div>
-                    <div class="flex flex-col gap-1">
-                        <div class="flex justify-between text-[10px] font-bold text-muted uppercase tracking-wider">
-                            <span>Meta Anual</span>
+                    <!-- Año -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex justify-between text-[9px] font-bold text-muted uppercase tracking-wider">
+                            <span>Meta Año</span>
                             <span id="display-goal-year-text" class="text-main">0%</span>
                         </div>
-                        <div class="progress-track">
-                            <div id="progress-fill-year" class="progress-fill" style="width: 0%;"></div>
+                        <div class="w-full h-1.5 bg-surface-main rounded-full overflow-hidden border border-surface">
+                            <div id="progress-fill-year" class="h-full bg-brand-500 rounded-full transition-all duration-500 ease-out" style="width: 0%;"></div>
                         </div>
                     </div>
                 </div>
                 
+                <!-- BOTONES ACCIÓN MÁS COMPACTOS Y CON SOMBRA PERFECTAMENTE CENTRADA -->
                 <div class="flex justify-between px-10 items-center relative">
-                    <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn w-[4.5rem] h-[4.5rem] rounded-full bg-surface-card border-[3px] border-rose-400 text-rose-500 text-3xl flex items-center justify-center shadow-[0_5px_15px_-3px_rgba(244,63,94,0.4)] z-10 select-none outline-none focus:outline-none">
+                    <!-- Botón Gasto: 3.75rem (60px) en lugar de 4.5rem (72px) -->
+                    <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn w-[3.75rem] h-[3.75rem] rounded-full bg-surface-card border-[3px] border-rose-400 text-rose-500 text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.4)] z-10 select-none outline-none focus:outline-none">
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     
-                    <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shadow-md border border-brand-100 z-10 outline-none focus:outline-none" title="Editar Metas">
-                        <i class="fa-solid fa-bullseye text-xl"></i>
+                    <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shadow-md border border-brand-100 z-10 outline-none focus:outline-none" title="Editar Metas">
+                        <i class="fa-solid fa-bullseye text-lg"></i>
                     </button>
 
-                    <button id="btn-income" onclick="if(!endMonthTriggered) openTransactionModal('income')" class="fab-btn w-[4.5rem] h-[4.5rem] rounded-full bg-surface-card border-[3px] border-emerald-400 text-emerald-500 text-3xl flex items-center justify-center shadow-[0_5px_15px_-3px_rgba(16,185,129,0.4)] z-10 select-none outline-none focus:outline-none">
+                    <!-- Botón Ingreso: 3.75rem (60px) en lugar de 4.5rem (72px) -->
+                    <button id="btn-income" onclick="if(!endMonthTriggered) openTransactionModal('income')" class="fab-btn w-[3.75rem] h-[3.75rem] rounded-full bg-surface-card border-[3px] border-emerald-400 text-emerald-500 text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] z-10 select-none outline-none focus:outline-none">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
@@ -543,6 +550,7 @@
             </div>
         </div>
 
+        <!-- MODAL: NUEVA TRANSACCIÓN -->
         <div id="modal-transaction" class="absolute inset-0 z-50 modal-bg hidden flex flex-col justify-end">
             <div class="bg-surface-card w-full rounded-t-[2rem] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
                 <div class="flex justify-between items-center mb-6">
@@ -598,6 +606,7 @@
             </div>
         </div>
 
+        <!-- MODAL: NUEVA CATEGORÍA -->
         <div id="modal-category" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200" id="modal-category-content">
                 <h3 class="text-xl font-bold mb-4 text-main" id="cat-modal-title">Nueva Categoría</h3>
@@ -633,6 +642,7 @@
             </div>
         </div>
 
+        <!-- MODAL: METAS -->
         <div id="modal-goals" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
                 <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mb-4">
@@ -662,6 +672,7 @@
             </div>
         </div>
 
+        <!-- MODAL: FINALIZAR MES -->
         <div id="modal-end-month" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center">
                 <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
@@ -695,6 +706,7 @@
             </div>
         </div>
 
+        <!-- MODAL: GASTO FIJO -->
         <div id="modal-fixed-expense" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
                 <div class="flex items-center gap-3 mb-6">
@@ -988,7 +1000,6 @@
             updateThemeUI(themeName);
             if(window.appState.data && window.appState.transactions) window.updateDashboardUI();
             
-            // Actualizar Meta Tag para Safari/Chrome en celular
             const metaTheme = document.getElementById('meta-theme-color');
             if(metaTheme) {
                 if(themeName === 'espacial') metaTheme.content = '#07080c';
@@ -1177,7 +1188,7 @@
             const viewingMonth = window.appState.viewingMonthId;
             if(!viewingMonth) return;
             
-            document.getElementById('current-month-display').innerHTML = `${formatMonthName(viewingMonth)} <i class="fa-solid fa-chevron-down text-[10px]"></i>`;
+            document.getElementById('current-month-display').innerHTML = `${formatMonthName(viewingMonth)} <i class="fa-solid fa-chevron-down text-[9px] text-muted ml-0.5"></i>`;
             
             const months = getAvailableMonths();
             const list = document.getElementById('month-options-list');
@@ -1231,7 +1242,7 @@
             window.appState.viewingMonthId = window.appState.data.currentMonthId; window.updateDashboardUI(); window.updateMonthDisplay();
         }
         document.addEventListener('click', (e) => {
-            const monthWrapper = document.querySelector('.custom-select-wrapper.w-36');
+            const monthWrapper = document.querySelector('.custom-select-wrapper.w-auto');
             if (monthWrapper && !monthWrapper.contains(e.target)) window.closeMonthSelect();
             const catWrapper = document.querySelector('#form-transaction .custom-select-wrapper');
             if (catWrapper && !catWrapper.contains(e.target)) window.closeCatSelect();
