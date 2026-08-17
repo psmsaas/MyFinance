@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <!-- Meta tag dinámico para colorear la barra de estado del iPhone -->
+    <meta name="theme-color" id="meta-theme-color" content="#f8fafc">
     <title>MyFinance - Finanza Personal</title>
     
     <!-- Tailwind CSS -->
@@ -69,7 +71,7 @@
         }
 
         .theme-espacial {
-            /* TEMA ESPACIAL (Oscuro) basado en tu paleta */
+            /* TEMA ESPACIAL (Oscuro) */
             --brand-50: #1c1b39; --brand-100: #2e2661; --brand-200: #4a3e85; --brand-300: #6350a3;
             --brand-400: #7f569f; --brand-500: #7f569f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
@@ -89,7 +91,7 @@
         }
 
         .theme-kwai {
-            /* TEMA KWAI (Comida Pastel) basado en tu paleta */
+            /* TEMA KWAI (Comida Pastel) */
             --brand-50: #fdf2f8; --brand-100: #fce7f3; --brand-200: #fbcfe8; --brand-300: #f9a8d4;
             --brand-400: #f4abcc; --brand-500: #7f579f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
@@ -108,11 +110,22 @@
             --modal-overlay: rgba(127, 87, 159, 0.4); 
         }
 
+        /* FIX CRÍTICO PARA SAFARI: Elimina rebote y líneas blancas */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overscroll-behavior: none; 
+            background-color: var(--surface-main);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-main);
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .bg-surface-main { background-color: var(--surface-main); }
@@ -261,21 +274,15 @@
         }
     </style>
 </head>
-<body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent">
-
-    <!-- RELLENOS PARA EVITAR CORTE NEGRO EN SAFARI -->
-    <div class="fixed top-0 left-0 w-full h-1/2 bg-surface-main z-[-1] transition-colors duration-300"></div>
-    <div class="fixed bottom-0 left-0 w-full h-1/2 bg-surface-card z-[-1] transition-colors duration-300"></div>
+<body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 overflow-hidden bg-surface-main">
 
     <div id="app-container" class="relative w-full h-full sm:max-w-md sm:h-[850px] bg-surface-card sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
         
-        <!-- PANTALLA: CARGA GLOBAL -->
         <div id="screen-loading" class="absolute inset-0 z-[100] bg-surface-card flex flex-col items-center justify-center fade-in transition-colors duration-300">
             <img src="logo.png" alt="Cargando..." class="w-24 h-24 animate-bounce mb-4 object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-6xl text-brand-500 animate-bounce mb-4\'></i>'">
             <p class="text-muted font-medium">Conectando con la nube...</p>
         </div>
 
-        <!-- PANTALLA: LOGIN -->
         <div id="screen-login" class="absolute inset-0 z-10 bg-surface-card flex flex-col p-6 overflow-y-auto hidden transition-colors duration-300">
             <div class="flex-1 flex flex-col justify-center items-center">
                 <div class="w-28 h-28 flex items-center justify-center mb-4 transform transition hover:scale-105">
@@ -308,7 +315,6 @@
             </div>
         </div>
 
-        <!-- PANTALLA: REGISTRO -->
         <div id="screen-register" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 overflow-y-auto fade-in transition-colors duration-300">
             <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -344,7 +350,6 @@
             </div>
         </div>
 
-        <!-- PANTALLA: RECUPERAR CONTRASEÑA -->
         <div id="screen-forgot" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 fade-in transition-colors duration-300">
             <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
@@ -378,7 +383,7 @@
                 <div class="flex items-center gap-3 pointer-events-auto">
                     <div class="relative custom-select-wrapper w-36">
                         <!-- Dropdown de Meses -->
-                        <div class="flex items-center gap-2 cursor-pointer py-2 px-3 rounded-2xl bg-surface-card shadow-sm border border-surface transition-colors hover:bg-surface-hover" onclick="toggleMonthSelect()">
+                        <div class="flex items-center gap-2 cursor-pointer py-2 px-3 rounded-2xl bg-surface-card shadow-sm border border-surface transition-colors" onclick="toggleMonthSelect()">
                             <div class="w-8 h-8 bg-brand-100 rounded-xl flex items-center justify-center p-1">
                                 <img src="logo.png" alt="MyFinances" class="w-full h-full object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-sm\'></i>'">
                             </div>
@@ -396,8 +401,8 @@
                     <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-brand-200 transition-all hover:bg-brand-200">
                         Volver
                     </button>
-                    <!-- BOTÓN DE AJUSTES (Solo visible en PC / sm:flex) -->
-                    <button onclick="toggleSidebar()" class="hidden sm:flex w-10 h-10 items-center justify-center bg-surface-card text-muted hover:text-brand-500 rounded-xl border border-surface shadow-sm transition-all hover:shadow-md transform hover:scale-105" title="Abrir Menú / Ajustes">
+                    <!-- BOTÓN DE AJUSTES (Solo visible en PC) -->
+                    <button onclick="toggleSidebar()" class="hidden sm:flex w-10 h-10 items-center justify-center bg-surface-card text-muted hover:text-brand-500 rounded-xl border border-surface shadow-sm transition-all hover:shadow-md transform hover:scale-105" title="Abrir Menú">
                         <i class="fa-solid fa-gear text-lg"></i>
                     </button>
                 </div>
@@ -424,6 +429,7 @@
                 </div>
             </main>
 
+            <!-- AQUI: Padding inferior dinámico para rellenar la zona segura de Safari -->
             <div class="bg-surface-card pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
@@ -537,7 +543,6 @@
             </div>
         </div>
 
-        <!-- MODAL: NUEVA TRANSACCIÓN -->
         <div id="modal-transaction" class="absolute inset-0 z-50 modal-bg hidden flex flex-col justify-end">
             <div class="bg-surface-card w-full rounded-t-[2rem] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
                 <div class="flex justify-between items-center mb-6">
@@ -593,7 +598,6 @@
             </div>
         </div>
 
-        <!-- MODAL: NUEVA CATEGORÍA -->
         <div id="modal-category" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200" id="modal-category-content">
                 <h3 class="text-xl font-bold mb-4 text-main" id="cat-modal-title">Nueva Categoría</h3>
@@ -629,7 +633,6 @@
             </div>
         </div>
 
-        <!-- MODAL: METAS -->
         <div id="modal-goals" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
                 <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mb-4">
@@ -659,7 +662,6 @@
             </div>
         </div>
 
-        <!-- MODAL: FINALIZAR MES -->
         <div id="modal-end-month" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center">
                 <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
@@ -693,7 +695,6 @@
             </div>
         </div>
 
-        <!-- MODAL: GASTO FIJO -->
         <div id="modal-fixed-expense" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
                 <div class="flex items-center gap-3 mb-6">
@@ -903,7 +904,7 @@
                     if(unsubscribeData) unsubscribeData();
                     if(unsubscribeTrans) unsubscribeTrans();
                     
-                    document.body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent";
+                    document.body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 overflow-hidden bg-surface-main";
                     updateThemeUI('default');
 
                     if(loader) loader.classList.add('hidden');
@@ -982,10 +983,18 @@
 
         function applyTheme(themeName) {
             const body = document.getElementById('app-body');
-            body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent";
+            body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 overflow-hidden bg-surface-main";
             if (themeName !== 'default') body.classList.add(`theme-${themeName}`);
             updateThemeUI(themeName);
             if(window.appState.data && window.appState.transactions) window.updateDashboardUI();
+            
+            // Actualizar Meta Tag para Safari/Chrome en celular
+            const metaTheme = document.getElementById('meta-theme-color');
+            if(metaTheme) {
+                if(themeName === 'espacial') metaTheme.content = '#07080c';
+                else if(themeName === 'kwai') metaTheme.content = '#f6d59b';
+                else metaTheme.content = '#f8fafc';
+            }
         }
 
         function updateThemeUI(activeTheme) {
@@ -1123,6 +1132,7 @@
         }
 
         let touchstartX = 0; let touchendX = 0;
+        const swipeArea = document.getElementById('swipe-area');
         const appBody = document.getElementById('app-body');
 
         function checkDirection() {
