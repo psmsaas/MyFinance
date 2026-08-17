@@ -263,7 +263,7 @@
         }
     </style>
 </head>
-<body id="app-body" class="h-screen w-screen flex items-center justify-center transition-colors duration-300">
+<body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300">
 
     <div id="app-container" class="relative w-full h-full sm:max-w-md sm:h-[850px] bg-surface-card sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
         
@@ -416,7 +416,8 @@
                 </div>
             </main>
 
-            <div class="bg-surface-card pt-4 pb-8 rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
+            <!-- APLICADO safe-area-inset-bottom AQUÍ -->
+            <div class="bg-surface-card pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
                         Saldo: <span id="balance-total">$0.00</span>
@@ -445,7 +446,6 @@
                 </div>
                 
                 <div class="flex justify-between px-10 items-center relative">
-                    <!-- ILUMINACIÓN DE BOTONES CORREGIDA AQUÍ -->
                     <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn w-[4.5rem] h-[4.5rem] rounded-full bg-surface-card border-[3px] border-rose-400 text-rose-500 text-3xl flex items-center justify-center shadow-[0_5px_15px_-3px_rgba(244,63,94,0.4)] z-10 select-none outline-none focus:outline-none">
                         <i class="fa-solid fa-minus"></i>
                     </button>
@@ -475,7 +475,7 @@
                     <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center bg-surface-main hover:bg-surface-hover rounded-full text-muted hover:text-main transition"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar pb-20">
+                <div class="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar pb-[calc(5rem+env(safe-area-inset-bottom))]">
                     
                     <div class="bg-surface-main p-4 rounded-2xl border border-surface">
                         <div class="flex justify-between items-center mb-4">
@@ -530,9 +530,9 @@
             </div>
         </div>
 
-        <!-- MODAL: NUEVA TRANSACCIÓN -->
+        <!-- MODAL: NUEVA TRANSACCIÓN (Seguridad env-bottom aplicada aquí también) -->
         <div id="modal-transaction" class="absolute inset-0 z-50 modal-bg hidden flex flex-col justify-end">
-            <div class="bg-surface-card w-full rounded-t-[2rem] p-6 transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
+            <div class="bg-surface-card w-full rounded-t-[2rem] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
                 <div class="flex justify-between items-center mb-6">
                     <h3 id="trans-title" class="text-2xl font-bold text-main">Nuevo Movimiento</h3>
                     <button onclick="closeModal('modal-transaction')" class="w-8 h-8 bg-surface-main rounded-full flex items-center justify-center text-muted hover:text-main"><i class="fa-solid fa-xmark"></i></button>
@@ -896,7 +896,7 @@
                     if(unsubscribeData) unsubscribeData();
                     if(unsubscribeTrans) unsubscribeTrans();
                     
-                    document.body.className = "h-screen w-screen flex items-center justify-center transition-colors duration-300";
+                    document.body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300";
                     updateThemeUI('default');
 
                     if(loader) loader.classList.add('hidden');
@@ -975,7 +975,7 @@
 
         function applyTheme(themeName) {
             const body = document.getElementById('app-body');
-            body.className = "h-screen w-screen flex items-center justify-center transition-colors duration-300";
+            body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300";
             if (themeName !== 'default') body.classList.add(`theme-${themeName}`);
             updateThemeUI(themeName);
             if(window.appState.data && window.appState.transactions) window.updateDashboardUI();
