@@ -1259,7 +1259,6 @@
                 const isPaid = window.appState.transactions.some(t => t.categoryId === 'fixed_' + fe.id && t.monthId === data.currentMonthId);
                 const hasWarning = fe.hikeMonth && fe.hikeMonth === data.currentMonthId;
                 
-                // --- LÓGICA FECHAS DE VENCIMIENTO ---
                 let dueDateText = '';
                 if (!isPaid && fe.dueDate) {
                     const today = new Date();
@@ -1275,18 +1274,22 @@
                         else if (diff <= 5) dueDateText = `<span class="text-[10px] text-amber-500 font-bold block leading-tight mt-1"><i class="fa-solid fa-clock"></i> Vence en ${diff} días</span>`;
                         else dueDateText = `<span class="text-[10px] text-muted font-medium block leading-tight mt-1"><i class="fa-solid fa-calendar-day"></i> Vence el día ${fe.dueDate}</span>`;
                     } else dueDateText = `<span class="text-[10px] text-muted font-medium block leading-tight mt-1"><i class="fa-solid fa-calendar-day"></i> Vence el día ${fe.dueDate}</span>`;
+                } else if (isPaid) {
+                    dueDateText = `<span class="text-[10px] text-emerald-500 font-bold block leading-tight mt-1">Pagado</span>`;
                 }
 
                 fixedList.insertAdjacentHTML('beforeend', `
                     <li class="flex flex-col bg-surface-card p-3 rounded-xl shadow-sm border border-surface mb-2 transition-colors">
                         <div class="flex justify-between items-center">
                             <div class="flex items-center gap-3">
-                                ${isPaid ? '<div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner"><i class="fa-solid fa-check"></i></div>' : 
-                                  `<button onclick="payFixedExpense('${fe.id}')" class="w-8 h-8 rounded-full bg-surface-main border-2 border-surface flex items-center justify-center hover:bg-emerald-50 hover:border-emerald-200 text-transparent hover:text-emerald-400 transition" title="Marcar pagado"><i class="fa-solid fa-check"></i></button>`}
+                                ${isPaid ? 
+                                    `<button onclick="undoFixedExpense('${fe.id}')" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shadow-inner hover:opacity-80 transition outline-none" title="Deshacer pago"><i class="fa-solid fa-check"></i></button>` : 
+                                    `<button onclick="payFixedExpense('${fe.id}')" class="w-8 h-8 rounded-full bg-surface-main border-2 border-surface flex items-center justify-center hover:bg-emerald-50 hover:border-emerald-200 text-transparent hover:text-emerald-400 transition" title="Marcar pagado"><i class="fa-solid fa-check"></i></button>`
+                                }
                                 <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center ${fe.color}"><i class="fa-solid ${fe.icon}"></i></div>
                                 <div class="flex flex-col">
                                     <span class="text-sm font-bold text-main">${fe.name} ${hasWarning ? '<i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs ml-1" title="Posible aumento este mes"></i>' : ''}</span>
-                                    <span class="text-xs ${isPaid ? 'text-emerald-500' : 'text-rose-500'} font-bold">${isPaid ? 'Pagado' : '-$'+fe.amount}</span>
+                                    ${!isPaid ? `<span class="text-xs text-rose-500 font-bold">-$${fe.amount}</span>` : ''}
                                     ${dueDateText}
                                 </div>
                             </div>
@@ -1383,6 +1386,23 @@
                     window.showToast(fe.name + ' descontado con éxito', 'success');
                 } catch(e) { window.showToast('Error al descontar', 'error'); }
             }, { title: '¿Confirmar Pago?', btnText: 'Sí, descontar', btnColor: 'bg-emerald-500', btnShadow: 'shadow-emerald-200', iconBg: 'bg-emerald-100', iconColor: 'text-emerald-600', icon: 'fa-check-double' });
+        }
+
+        window.undoFixedExpense = (id) => {
+            const data = window.appState.data;
+            if (window.appState.viewingMonthId !== data.currentMonthId) return window.showToast('Solo puedes modificar el mes actual', 'error');
+            
+            const fe = data.fixedExpenses.find(f => f.id === id); if (!fe) return;
+            
+            const transaction = window.appState.transactions.find(t => t.categoryId === 'fixed_' + fe.id && t.monthId === data.currentMonthId);
+            if (!transaction) return;
+
+            window.showConfirm(`¿Deshacer el pago de "${fe.name}"? Los $${fe.amount} volverán a tu saldo.`, async () => {
+                try {
+                    await deleteDoc(doc(getTransColRef(), transaction.id));
+                    window.showToast('Pago deshecho correctamente', 'info');
+                } catch(e) { window.showToast('Error al deshacer', 'error'); }
+            }, { title: '¿Deshacer Pago?', btnText: 'Sí, devolver saldo', btnColor: 'bg-amber-500', btnShadow: 'shadow-amber-200', iconBg: 'bg-amber-100', iconColor: 'text-amber-600', icon: 'fa-rotate-left' });
         }
 
         document.getElementById('form-fixed-expense').addEventListener('submit', async (e) => {
