@@ -94,13 +94,13 @@
             --brand-400: #f4abcc; --brand-500: #7f579f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
             
-            --surface-main: #f6d59b; /* Fondo amarillo */
+            --surface-main: #f6d59b; 
             --surface-card: #ffffff; 
-            --surface-hover: #c0dcc5; /* Verde pastel al hacer hover */
-            --surface-border: #f4abcc; /* Bordes rosa pastel */
+            --surface-hover: #c0dcc5; 
+            --surface-border: #f4abcc; 
             
             --text-main: #374151; 
-            --text-muted: #7f579f; /* Textos secundarios en morado */
+            --text-muted: #7f579f; 
             --text-inverse: #ffffff;
             
             --ring-bg: #ffffff;
@@ -110,11 +110,9 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--surface-main);
             color: var(--text-main);
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .bg-surface-main { background-color: var(--surface-main); }
@@ -263,15 +261,21 @@
         }
     </style>
 </head>
-<body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300">
+<body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent">
+
+    <!-- RELLENOS PARA EVITAR CORTE NEGRO EN SAFARI -->
+    <div class="fixed top-0 left-0 w-full h-1/2 bg-surface-main z-[-1] transition-colors duration-300"></div>
+    <div class="fixed bottom-0 left-0 w-full h-1/2 bg-surface-card z-[-1] transition-colors duration-300"></div>
 
     <div id="app-container" class="relative w-full h-full sm:max-w-md sm:h-[850px] bg-surface-card sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
         
+        <!-- PANTALLA: CARGA GLOBAL -->
         <div id="screen-loading" class="absolute inset-0 z-[100] bg-surface-card flex flex-col items-center justify-center fade-in transition-colors duration-300">
             <img src="logo.png" alt="Cargando..." class="w-24 h-24 animate-bounce mb-4 object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-6xl text-brand-500 animate-bounce mb-4\'></i>'">
             <p class="text-muted font-medium">Conectando con la nube...</p>
         </div>
 
+        <!-- PANTALLA: LOGIN -->
         <div id="screen-login" class="absolute inset-0 z-10 bg-surface-card flex flex-col p-6 overflow-y-auto hidden transition-colors duration-300">
             <div class="flex-1 flex flex-col justify-center items-center">
                 <div class="w-28 h-28 flex items-center justify-center mb-4 transform transition hover:scale-105">
@@ -374,7 +378,7 @@
                 <div class="flex items-center gap-3 pointer-events-auto">
                     <div class="relative custom-select-wrapper w-36">
                         <!-- Dropdown de Meses -->
-                        <div class="flex items-center gap-2 cursor-pointer py-2 px-3 rounded-2xl bg-surface-card shadow-sm border border-surface transition-colors" onclick="toggleMonthSelect()">
+                        <div class="flex items-center gap-2 cursor-pointer py-2 px-3 rounded-2xl bg-surface-card shadow-sm border border-surface transition-colors hover:bg-surface-hover" onclick="toggleMonthSelect()">
                             <div class="w-8 h-8 bg-brand-100 rounded-xl flex items-center justify-center p-1">
                                 <img src="logo.png" alt="MyFinances" class="w-full h-full object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-sm\'></i>'">
                             </div>
@@ -391,6 +395,10 @@
                 <div class="flex gap-2 items-center pointer-events-auto">
                     <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-brand-200 transition-all hover:bg-brand-200">
                         Volver
+                    </button>
+                    <!-- BOTÓN DE AJUSTES (Solo visible en PC / sm:flex) -->
+                    <button onclick="toggleSidebar()" class="hidden sm:flex w-10 h-10 items-center justify-center bg-surface-card text-muted hover:text-brand-500 rounded-xl border border-surface shadow-sm transition-all hover:shadow-md transform hover:scale-105" title="Abrir Menú / Ajustes">
+                        <i class="fa-solid fa-gear text-lg"></i>
                     </button>
                 </div>
             </div>
@@ -416,8 +424,7 @@
                 </div>
             </main>
 
-            <!-- APLICADO safe-area-inset-bottom AQUÍ -->
-            <div class="bg-surface-card pt-4 pb-[calc(2rem+env(safe-area-inset-bottom))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
+            <div class="bg-surface-card pt-4 pb-[calc(2.5rem+env(safe-area-inset-bottom))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
                         Saldo: <span id="balance-total">$0.00</span>
@@ -530,7 +537,7 @@
             </div>
         </div>
 
-        <!-- MODAL: NUEVA TRANSACCIÓN (Seguridad env-bottom aplicada aquí también) -->
+        <!-- MODAL: NUEVA TRANSACCIÓN -->
         <div id="modal-transaction" class="absolute inset-0 z-50 modal-bg hidden flex flex-col justify-end">
             <div class="bg-surface-card w-full rounded-t-[2rem] p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
                 <div class="flex justify-between items-center mb-6">
@@ -896,7 +903,7 @@
                     if(unsubscribeData) unsubscribeData();
                     if(unsubscribeTrans) unsubscribeTrans();
                     
-                    document.body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300";
+                    document.body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent";
                     updateThemeUI('default');
 
                     if(loader) loader.classList.add('hidden');
@@ -975,7 +982,7 @@
 
         function applyTheme(themeName) {
             const body = document.getElementById('app-body');
-            body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300";
+            body.className = "h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 relative bg-transparent";
             if (themeName !== 'default') body.classList.add(`theme-${themeName}`);
             updateThemeUI(themeName);
             if(window.appState.data && window.appState.transactions) window.updateDashboardUI();
@@ -1116,7 +1123,6 @@
         }
 
         let touchstartX = 0; let touchendX = 0;
-        const swipeArea = document.getElementById('swipe-area');
         const appBody = document.getElementById('app-body');
 
         function checkDirection() {
@@ -1127,8 +1133,20 @@
                 if (!document.getElementById('sidebar').classList.contains('translate-x-full')) toggleSidebar();
             }
         }
+        
+        // Touch events (Mobile)
         appBody.addEventListener('touchstart', e => touchstartX = e.changedTouches[0].screenX, {passive: true});
         appBody.addEventListener('touchend', e => { touchendX = e.changedTouches[0].screenX; checkDirection(); }, {passive: true});
+
+        // Mouse events (Desktop Drag simulation)
+        let isMouseDown = false;
+        appBody.addEventListener('mousedown', e => { isMouseDown = true; touchstartX = e.screenX; });
+        appBody.addEventListener('mouseup', e => { 
+            if(!isMouseDown) return; 
+            isMouseDown = false; 
+            touchendX = e.screenX; 
+            checkDirection(); 
+        });
 
         function getAvailableMonths() {
             const data = window.appState.data;
