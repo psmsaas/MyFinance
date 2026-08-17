@@ -2,21 +2,134 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MyFinances - Finanzas Personales</title>
+    
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        /* 
+                           We use CSS variables here so we can change them dynamically via Javascript.
+                        */
+                        brand: {
+                            50: 'var(--brand-50)',
+                            100: 'var(--brand-100)',
+                            200: 'var(--brand-200)',
+                            300: 'var(--brand-300)',
+                            400: 'var(--brand-400)',
+                            500: 'var(--brand-500)',
+                            600: 'var(--brand-600)',
+                            700: 'var(--brand-700)',
+                            800: 'var(--brand-800)',
+                            900: 'var(--brand-900)',
+                        },
+                        surface: {
+                            main: 'var(--surface-main)',
+                            card: 'var(--surface-card)',
+                            hover: 'var(--surface-hover)',
+                            border: 'var(--surface-border)',
+                        },
+                        text: {
+                            main: 'var(--text-main)',
+                            muted: 'var(--text-muted)',
+                            inverse: 'var(--text-inverse)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Iconos y Gráficos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
+        /* 
+           --- THEME DEFINITIONS --- 
+        */
+
+        /* Theme: Default (Light/Purple based on original design) */
+        :root {
+            --brand-50: #f5f3ff; --brand-100: #ede9fe; --brand-200: #ddd6fe; --brand-300: #c4b5fd;
+            --brand-400: #a78bfa; --brand-500: #8b5cf6; --brand-600: #7c3aed; --brand-700: #6d28d9;
+            --brand-800: #5b21b6; --brand-900: #4c1d95;
+            
+            --surface-main: #f8fafc; 
+            --surface-card: #ffffff; 
+            --surface-hover: #f3f4f6;
+            --surface-border: #f3f4f6; 
+            
+            --text-main: #1f2937; 
+            --text-muted: #6b7280; 
+            --text-inverse: #ffffff;
+            
+            --ring-bg: #ffffff;
+            --ring-border: rgba(0,0,0,0.03);
+            --modal-overlay: rgba(0, 0, 0, 0.4);
+        }
+
+        /* Theme: Espacial (Dark) */
+        .theme-espacial {
+            --brand-50: #1c1b39; --brand-100: #2e2661; --brand-200: #4a3e85; --brand-300: #6350a3;
+            --brand-400: #7f569f; --brand-500: #7f569f; --brand-600: #6a4687; --brand-700: #54366e;
+            --brand-800: #3f2756; --brand-900: #2e1a40;
+            
+            --surface-main: #07080c; 
+            --surface-card: #1c1b39; 
+            --surface-hover: #2e2661;
+            --surface-border: #2e2661;
+            
+            --text-main: #ffffff; 
+            --text-muted: #a1a1aa; 
+            --text-inverse: #ffffff;
+            
+            --ring-bg: #2e2661;
+            --ring-border: rgba(255,255,255,0.05);
+            --modal-overlay: rgba(7, 8, 12, 0.7);
+        }
+
+        /* Theme: Kwai (Food/Light Colorful) */
+        .theme-kwai {
+            --brand-50: #fdf2f8; --brand-100: #fce7f3; --brand-200: #fbcfe8; --brand-300: #f9a8d4;
+            --brand-400: #f4abcc; --brand-500: #7f579f; --brand-600: #6a4687; --brand-700: #54366e;
+            --brand-800: #3f2756; --brand-900: #2e1a40;
+            
+            --surface-main: #f6d59b; 
+            --surface-card: #ffffff; 
+            --surface-hover: #c0dcc5; 
+            --surface-border: #f4abcc; 
+            
+            --text-main: #374151; 
+            --text-muted: #7f579f; 
+            --text-inverse: #ffffff;
+            
+            --ring-bg: #ffffff;
+            --ring-border: #f4abcc;
+            --modal-overlay: rgba(127, 87, 159, 0.4); 
+        }
+
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            color: #334155;
+            background-color: var(--surface-main);
+            color: var(--text-main);
             overflow-x: hidden;
             -webkit-tap-highlight-color: transparent;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        .bg-surface-main { background-color: var(--surface-main); }
+        .bg-surface-card { background-color: var(--surface-card); }
+        .bg-surface-hover:hover { background-color: var(--surface-hover); }
+        .border-surface { border-color: var(--surface-border); }
+        .text-main { color: var(--text-main); }
+        .text-muted { color: var(--text-muted); }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -24,12 +137,54 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .modal-bg {
-            background-color: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
+        /* --- ESTRELLAS ANIMADAS (Tema Espacial) --- */
+        .stars-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0; 
+            display: none; 
+        }
+        .theme-espacial .stars-container { display: block; }
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration) ease-in-out infinite alternate;
+            opacity: 0;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.1; transform: scale(0.5); box-shadow: 0 0 2px rgba(255,255,255,0.1); }
+            100% { opacity: var(--max-opacity); transform: scale(1); box-shadow: 0 0 8px rgba(255,255,255,0.8); }
         }
 
-        /* Chart */
+        /* --- BURBUJAS ANIMADAS (Tema Kwai) --- */
+        .kawaii-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+            display: none;
+        }
+        .theme-kwai .kawaii-container { display: block; }
+        .kawaii-blob {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0;
+            animation: floatUp var(--duration) linear infinite;
+            bottom: -100px;
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(calc(-100vh - 100px)) scale(1.1); opacity: 0; }
+        }
+
+        .modal-bg { background-color: var(--modal-overlay); backdrop-filter: blur(4px); transition: background-color 0.3s; }
+
         .chart-container {
             position: relative;
             width: 260px;
@@ -38,44 +193,49 @@
         }
         .chart-center-text {
             position: absolute;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
             width: 70%;
         }
 
-        /* Botones Flotantes */
-        .fab-btn { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s; }
+        .fab-btn { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s, background-color 0.3s, border-color 0.3s; }
         .fab-btn:active { transform: scale(0.9); }
         .fab-btn.disabled { opacity: 0.5; pointer-events: none; filter: grayscale(100%); }
 
+        .theme-espacial .btn-expense-shadow { box-shadow: 0 0 15px rgba(244, 63, 94, 0.2); }
+        .theme-espacial .btn-income-shadow { box-shadow: 0 0 15px rgba(16, 185, 129, 0.2); }
+        .theme-espacial .btn-goals-shadow { box-shadow: 0 0 15px rgba(127, 86, 159, 0.2); }
+
+        .progress-track {
+            width: 100%; height: 6px;
+            background-color: var(--surface-main);
+            border-radius: 9999px; overflow: hidden;
+            border: 1px solid var(--surface-border);
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-400), var(--brand-600));
+            border-radius: 9999px;
+            transition: width 0.5s ease-out;
+        }
+
         /* Anillo de categorías */
         .category-ring {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0; left: 0;
-            pointer-events: none;
+            position: absolute; width: 100%; height: 100%;
+            top: 0; left: 0; pointer-events: none;
         }
         .cat-icon {
-            position: absolute;
-            width: 52px; height: 52px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center; justify-content: center;
+            position: absolute; width: 52px; height: 52px;
+            border-radius: 50%; background: var(--ring-bg);
+            display: flex; align-items: center; justify-content: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            border: 1px solid rgba(0,0,0,0.03);
+            border: 1px solid var(--ring-border);
             transform: translate(-50%, -50%);
-            pointer-events: auto;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto; cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s, border-color 0.3s;
         }
-        .cat-icon:hover {
-            transform: translate(-50%, -50%) scale(1.15);
-            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-        }
+        .cat-icon:hover { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
         .cat-icon i { font-size: 1.35rem; }
 
         /* Dropdown personalizado */
@@ -83,170 +243,177 @@
         .custom-select {
             display: flex; align-items: center; justify-content: space-between;
             width: 100%; padding: 0.75rem 1rem;
-            background-color: white; border: 1px solid #d1d5db;
+            background-color: var(--surface-card); border: 1px solid var(--surface-border);
             border-radius: 0.75rem; cursor: pointer; transition: all 0.2s;
+            color: var(--text-main);
         }
         .custom-options {
             position: absolute; top: 100%; left: 0; right: 0;
-            margin-top: 0.5rem; background-color: white; border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 0.5rem; background-color: var(--surface-card); border: 1px solid var(--surface-border);
+            border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             z-index: 50; max-height: 250px; overflow-y: auto;
             display: none; opacity: 0; transform: translateY(-10px);
-            transition: opacity 0.2s, transform 0.2s;
+            transition: opacity 0.2s, transform 0.2s, background-color 0.3s;
         }
         .custom-options.open { display: block; opacity: 1; transform: translateY(0); }
         .custom-option {
             display: flex; align-items: center; padding: 0.75rem 1rem;
-            cursor: pointer; transition: background-color 0.2s;
+            cursor: pointer; transition: background-color 0.2s; color: var(--text-main);
         }
-        .custom-option:hover { background-color: #f3f4f6; }
+        .custom-option:hover { background-color: var(--surface-hover); }
+
+        .theme-espacial input, .theme-espacial select { background-color: var(--brand-100); color: white; border: 1px solid var(--brand-200); }
+        .theme-espacial input::placeholder { color: var(--text-muted); }
+        .theme-kwai input, .theme-kwai select { border: 1px solid var(--brand-400); }
     </style>
 </head>
-<body class="h-screen w-screen flex items-center justify-center">
+<body id="app-body" class="h-screen w-screen flex items-center justify-center transition-colors duration-300">
 
-    <div id="app-container" class="relative w-full max-w-md h-full sm:h-[850px] bg-white sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col">
+    <div id="app-container" class="relative w-full max-w-md h-full sm:h-[850px] bg-surface-card sm:rounded-[2rem] sm:shadow-2xl overflow-hidden flex flex-col transition-colors duration-300">
         
         <!-- PANTALLA: CARGA GLOBAL -->
-        <div id="screen-loading" class="absolute inset-0 z-[100] bg-white flex flex-col items-center justify-center fade-in">
-            <i class="fa-solid fa-wallet text-6xl text-emerald-500 animate-bounce mb-4"></i>
-            <p class="text-gray-500 font-medium">Conectando con la nube...</p>
+        <div id="screen-loading" class="absolute inset-0 z-[100] bg-surface-card flex flex-col items-center justify-center fade-in transition-colors duration-300">
+            <img src="logo.png" alt="Cargando..." class="w-24 h-24 animate-bounce mb-4 object-contain" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-6xl text-brand-500 animate-bounce mb-4\'></i>'">
+            <p class="text-muted font-medium">Conectando con la nube...</p>
         </div>
 
-        <div id="screen-login" class="absolute inset-0 z-10 bg-white flex flex-col p-6 overflow-y-auto hidden">
+        <div id="screen-login" class="absolute inset-0 z-10 bg-surface-card flex flex-col p-6 overflow-y-auto hidden transition-colors duration-300">
             <div class="flex-1 flex flex-col justify-center items-center">
-                <div class="w-20 h-20 bg-gradient-to-tr from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition">
-                    <i class="fa-solid fa-wallet text-white text-4xl"></i>
+                <div class="w-28 h-28 flex items-center justify-center mb-4 transform transition hover:scale-105">
+                    <img src="logo.png" alt="MyFinances Logo" class="w-full h-full object-contain drop-shadow-md" onerror="this.outerHTML='<div class=\'w-20 h-20 bg-gradient-to-tr from-brand-400 to-brand-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg transform rotate-3 hover:rotate-0 transition\'><i class=\'fa-solid fa-wallet text-white text-4xl\'></i></div>'">
                 </div>
-                <h1 class="text-3xl font-bold text-gray-800 mb-2">Bienvenido</h1>
-                <p class="text-gray-500 mb-8 text-center text-sm">Gestiona tus finanzas de forma segura en la nube.</p>
+                <h1 class="text-3xl font-bold text-main mb-2">Bienvenido</h1>
+                <p class="text-muted mb-8 text-center text-sm">Gestiona tus finanzas de forma segura en la nube.</p>
 
                 <form id="form-login" class="w-full space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                        <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 transition-colors" placeholder="tu@correo.com">
+                        <label class="block text-sm font-medium text-main mb-1">Correo Electrónico</label>
+                        <input type="email" id="login-email" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500 transition-colors" placeholder="tu@correo.com">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                        <input type="password" id="login-pass" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500 transition-colors" placeholder="••••••••">
+                        <label class="block text-sm font-medium text-main mb-1">Contraseña</label>
+                        <input type="password" id="login-pass" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500 transition-colors" placeholder="••••••••">
                     </div>
                     <div class="flex justify-end">
-                        <button type="button" onclick="navigate('screen-forgot')" class="text-sm text-emerald-600 font-medium hover:text-emerald-700">¿Olvidaste tu contraseña?</button>
+                        <button type="button" onclick="navigate('screen-forgot')" class="text-sm text-brand-600 font-medium hover:text-brand-700">¿Olvidaste tu contraseña?</button>
                     </div>
-                    <button type="submit" id="btn-login" class="w-full bg-emerald-500 text-white font-semibold py-3 rounded-xl hover:bg-emerald-600 transition shadow-md mt-4 flex justify-center items-center gap-2">
+                    <button type="submit" id="btn-login" class="w-full bg-brand-500 text-white font-semibold py-3 rounded-xl hover:bg-brand-600 transition shadow-md mt-4 flex justify-center items-center gap-2">
                         Iniciar Sesión
                     </button>
                 </form>
 
                 <div class="mt-8 flex items-center justify-center gap-2">
-                    <span class="text-gray-500 text-sm">¿No tienes cuenta?</span>
-                    <button onclick="navigate('screen-register')" class="text-emerald-600 font-semibold hover:text-emerald-700 text-sm">Regístrate</button>
+                    <span class="text-muted text-sm">¿No tienes cuenta?</span>
+                    <button onclick="navigate('screen-register')" class="text-brand-600 font-semibold hover:text-brand-700 text-sm">Regístrate</button>
                 </div>
             </div>
         </div>
 
-        <div id="screen-register" class="absolute inset-0 z-20 bg-white hidden flex flex-col p-6 overflow-y-auto fade-in">
-            <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-gray-400 hover:text-gray-800 transition">
+        <div id="screen-register" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 overflow-y-auto fade-in transition-colors duration-300">
+            <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
             </button>
             
             <div class="flex-1 flex flex-col justify-center items-center mt-10">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">Crear Cuenta</h2>
+                <h2 class="text-2xl font-bold text-main mb-6">Crear Cuenta</h2>
                 
                 <form id="form-register" class="w-full space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre Completo</label>
-                        <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="Juan Pérez">
+                        <label class="block text-sm font-medium text-main mb-1">Nombre Completo</label>
+                        <input type="text" id="reg-name" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="Juan Pérez">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">DNI / Documento</label>
-                        <input type="text" id="reg-doc" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="12345678">
+                        <label class="block text-sm font-medium text-main mb-1">DNI / Documento</label>
+                        <input type="text" id="reg-doc" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="12345678">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Correo Electrónico</label>
-                        <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="juan@ejemplo.com">
+                        <label class="block text-sm font-medium text-main mb-1">Correo Electrónico</label>
+                        <input type="email" id="reg-email" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="juan@ejemplo.com">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                        <input type="password" id="reg-pass" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="••••••••">
+                        <label class="block text-sm font-medium text-main mb-1">Contraseña</label>
+                        <input type="password" id="reg-pass" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="••••••••">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Repetir Contraseña</label>
-                        <input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="••••••••">
+                        <label class="block text-sm font-medium text-main mb-1">Repetir Contraseña</label>
+                        <input type="password" id="reg-pass-confirm" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="••••••••">
                     </div>
                     
-                    <button type="submit" id="btn-register" class="w-full bg-emerald-500 text-white font-semibold py-3 rounded-xl hover:bg-emerald-600 transition shadow-md mt-6">Registrarse</button>
+                    <button type="submit" id="btn-register" class="w-full bg-brand-500 text-white font-semibold py-3 rounded-xl hover:bg-brand-600 transition shadow-md mt-6">Registrarse</button>
                 </form>
             </div>
         </div>
 
-        <div id="screen-forgot" class="absolute inset-0 z-20 bg-white hidden flex flex-col p-6 fade-in">
-            <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-gray-400 hover:text-gray-800 transition">
+        <div id="screen-forgot" class="absolute inset-0 z-20 bg-surface-card hidden flex flex-col p-6 fade-in transition-colors duration-300">
+            <button onclick="navigate('screen-login')" class="absolute top-6 left-6 text-muted hover:text-main transition">
                 <i class="fa-solid fa-arrow-left text-xl"></i>
             </button>
             
             <div class="flex-1 flex flex-col justify-center items-center mt-10">
-                <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mb-4">
+                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mb-4">
                     <i class="fa-solid fa-key text-2xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Recuperar Cuenta</h2>
-                <p class="text-gray-500 mb-8 text-center text-sm">Ingresa tu correo para recibir un enlace oficial de Firebase para restablecerla.</p>
+                <h2 class="text-2xl font-bold text-main mb-2">Recuperar Cuenta</h2>
+                <p class="text-muted mb-8 text-center text-sm">Ingresa tu correo para recibir un enlace oficial para restablecerla.</p>
                 
                 <form id="form-forgot-email" class="w-full space-y-4">
+                    <div id="forgot-error-msg" class="hidden bg-rose-100 text-rose-700 text-sm p-3 rounded-xl font-medium border border-rose-200"></div>
                     <div>
-                        <input type="email" id="forgot-email" required class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-emerald-500" placeholder="Tu correo electrónico">
+                        <input type="email" id="forgot-email" required class="w-full px-4 py-3 rounded-xl border border-surface bg-surface-main text-main focus:ring-2 focus:ring-brand-500" placeholder="Tu correo electrónico">
                     </div>
-                    <button type="submit" id="btn-forgot" class="w-full bg-emerald-500 text-white font-semibold py-3 rounded-xl hover:bg-emerald-600 transition">Enviar Enlace</button>
+                    <button type="submit" id="btn-forgot" class="w-full bg-brand-500 text-white font-semibold py-3 rounded-xl hover:bg-brand-600 transition">Enviar Enlace</button>
                 </form>
             </div>
         </div>
 
-        <div id="screen-main" class="absolute inset-0 z-0 bg-green-50/30 hidden flex flex-col">
-            <!-- Header con Historial de Meses -->
-            <header class="bg-white px-6 py-4 flex justify-between items-center shadow-sm border-b border-gray-100 z-20 relative">
+        <div id="screen-main" class="absolute inset-0 z-0 bg-surface-main hidden flex flex-col transition-colors duration-300">
+            
+            <!-- Fondos Animados -->
+            <div class="stars-container" id="stars-layer"></div>
+            <div class="kawaii-container" id="kawaii-layer"></div>
+
+            <!-- Header -->
+            <header class="bg-surface-card px-6 py-4 flex justify-between items-center shadow-sm border-b border-surface z-20 relative transition-colors duration-300">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
-                        <i class="fa-solid fa-leaf text-lg"></i>
+                    <div class="w-10 h-10 bg-brand-100 rounded-xl flex items-center justify-center p-1">
+                        <img src="logo.png" alt="MyFinances" class="w-full h-full object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-lg\'></i>'">
                     </div>
                     <div class="relative custom-select-wrapper w-32">
                         <!-- Dropdown de Meses -->
-                        <div class="flex items-center gap-1 cursor-pointer py-1 px-2 -ml-2 rounded-lg hover:bg-gray-50 transition" onclick="toggleMonthSelect()">
+                        <div class="flex items-center gap-1 cursor-pointer py-1 px-2 -ml-2 rounded-lg bg-surface-hover transition-colors" onclick="toggleMonthSelect()">
                             <div>
-                                <h2 class="font-bold text-gray-800 leading-tight">MiDinero</h2>
-                                <span class="text-xs text-emerald-600 font-medium flex items-center gap-1" id="current-month-display">
+                                <h2 class="font-bold text-main leading-tight">MyFinances</h2>
+                                <span class="text-xs text-brand-600 font-medium flex items-center gap-1" id="current-month-display">
                                     Cargando... <i class="fa-solid fa-chevron-down text-[10px]"></i>
                                 </span>
                             </div>
                         </div>
                         <!-- Lista de meses pasados -->
-                        <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl w-48 -left-2" id="month-options-list">
-                            <!-- Llenado dinámicamente -->
-                        </div>
+                        <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl w-48 -left-2" id="month-options-list"></div>
                     </div>
                 </div>
                 <div class="flex gap-2 items-center">
-                    <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-emerald-200 mr-2 transition-all hover:bg-emerald-200">
+                    <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-brand-200 mr-2 transition-all hover:bg-brand-200">
                         Volver
                     </button>
-                    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-gray-500 hover:bg-gray-100 rounded-full transition">
+                    <button onclick="toggleSidebar()" class="w-10 h-10 flex items-center justify-center text-muted hover:text-main hover:bg-surface-hover rounded-full transition">
                         <i class="fa-solid fa-gear text-lg"></i>
                     </button>
                 </div>
             </header>
             
-            <!-- Aviso de Solo Lectura -->
             <div id="readonly-warning" class="hidden bg-amber-100 text-amber-800 text-xs font-bold py-1 px-4 text-center z-10 border-b border-amber-200 shadow-sm flex items-center justify-center gap-2">
                 <i class="fa-solid fa-clock-rotate-left"></i> Estás viendo un mes pasado (Solo Lectura)
             </div>
 
             <!-- Grafico Central -->
-            <main class="flex-1 relative overflow-hidden flex flex-col items-center justify-center">
+            <main class="flex-1 relative overflow-hidden flex flex-col items-center justify-center z-10">
                 <div class="chart-container">
                     <canvas id="mainChart"></canvas>
-                    <div class="chart-center-text">
-                        <img id="status-gif" src="" alt="Status" class="w-14 h-14 rounded-full mx-auto mb-1 object-cover shadow-sm hidden">
-                        <i id="status-icon" class="fa-solid fa-piggy-bank text-4xl text-gray-300 mb-2 transition-colors duration-500"></i>
-                        <div class="text-emerald-600 font-bold text-sm">
+                    <div class="chart-center-text flex flex-col items-center justify-center">
+                        <img id="status-logo" src="logo.png" alt="Status" class="w-16 h-16 object-contain mb-2 transition-transform duration-500 drop-shadow-md" onerror="this.outerHTML='<i id=\'status-icon\' class=\'fa-solid fa-wallet text-4xl text-brand-300 mb-2 transition-colors duration-500\'></i>'">
+                        
+                        <div class="text-brand-600 font-bold text-sm">
                             <span id="total-ingresos" class="block">+$0.00</span>
                         </div>
                         <div class="text-rose-500 font-bold text-sm mt-1">
@@ -257,52 +424,91 @@
                 </div>
             </main>
 
-            <div class="bg-white pt-4 pb-8 rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-10 border-t border-gray-100 relative">
-                <div class="flex justify-center mb-3">
-                    <div id="balance-badge" class="bg-gray-100 text-gray-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-gray-200 transition-colors duration-500">
+            <!-- Bottom Panel con Progreso -->
+            <div class="bg-surface-card pt-4 pb-8 rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
+                <div class="flex justify-center mb-4">
+                    <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
                         Saldo: <span id="balance-total">$0.00</span>
                     </div>
                 </div>
                 
-                <div class="flex justify-between px-10 pb-4 text-[11px] text-gray-400 font-semibold tracking-wider uppercase">
-                    <div class="text-center">Meta Mes<br><span id="display-goal-month" class="text-gray-600 text-sm">$0</span></div>
-                    <div class="text-center">Meta Año<br><span id="display-goal-year" class="text-gray-600 text-sm">$0</span></div>
+                <!-- Barras de Progreso -->
+                <div class="flex flex-col gap-3 px-8 mb-6">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[10px] font-bold text-muted uppercase tracking-wider">
+                            <span>Límite Mensual</span>
+                            <span id="display-goal-month-text" class="text-main">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-fill-month" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <div class="flex justify-between text-[10px] font-bold text-muted uppercase tracking-wider">
+                            <span>Meta Anual</span>
+                            <span id="display-goal-year-text" class="text-main">0%</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="progress-fill-year" class="progress-fill" style="width: 0%;"></div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="flex justify-between px-10 items-center relative">
-                    <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn w-[4.5rem] h-[4.5rem] rounded-full bg-white border-[3px] border-rose-400 text-rose-500 text-3xl flex items-center justify-center shadow-lg shadow-rose-100 z-10 select-none">
+                    <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn btn-expense-shadow w-[4.5rem] h-[4.5rem] rounded-full bg-surface-card border-2 border-rose-400 text-rose-500 text-3xl flex items-center justify-center shadow-lg shadow-rose-100 z-10 select-none">
                         <i class="fa-solid fa-minus"></i>
                     </button>
                     
-                    <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shadow-md border border-emerald-100 z-10" title="Editar Metas">
+                    <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn btn-goals-shadow w-12 h-12 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shadow-md border border-brand-100 z-10" title="Editar Metas">
                         <i class="fa-solid fa-bullseye text-xl"></i>
                     </button>
 
-                    <button id="btn-income" onclick="if(!endMonthTriggered) openTransactionModal('income')" class="fab-btn w-[4.5rem] h-[4.5rem] rounded-full bg-white border-[3px] border-emerald-400 text-emerald-500 text-3xl flex items-center justify-center shadow-lg shadow-emerald-100 z-10 select-none">
+                    <button id="btn-income" onclick="if(!endMonthTriggered) openTransactionModal('income')" class="fab-btn btn-income-shadow w-[4.5rem] h-[4.5rem] rounded-full bg-surface-card border-2 border-emerald-400 text-emerald-500 text-3xl flex items-center justify-center shadow-lg shadow-emerald-100 z-10 select-none">
                         <i class="fa-solid fa-plus"></i>
                     </button>
                 </div>
             </div>
 
-            <div id="sidebar-overlay" class="absolute inset-0 bg-slate-900/40 z-30 hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
-            <div id="sidebar" class="absolute top-0 right-0 w-[85%] max-w-sm h-full bg-white z-40 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl rounded-l-3xl">
-                <div class="p-5 bg-white flex justify-between items-center border-b border-gray-100">
+            <div id="sidebar-overlay" class="absolute inset-0 bg-black/60 z-30 hidden backdrop-blur-sm transition-opacity" onclick="toggleSidebar()"></div>
+            <div id="sidebar" class="absolute top-0 right-0 w-[85%] max-w-sm h-full bg-surface-card z-40 transform translate-x-full transition-transform duration-300 flex flex-col shadow-2xl rounded-l-3xl">
+                <div class="p-5 bg-surface-card flex justify-between items-center border-b border-surface">
                     <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center"><i class="fa-solid fa-user text-gray-500"></i></div>
+                        <div class="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center"><i class="fa-solid fa-user text-brand-600"></i></div>
                         <div>
-                            <h2 class="font-bold text-gray-800 leading-none" id="sidebar-user-name">Usuario</h2>
-                            <span class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Ajustes</span>
+                            <h2 class="font-bold text-main leading-none" id="sidebar-user-name">Usuario</h2>
+                            <span class="text-[10px] text-muted uppercase font-bold tracking-wider">Ajustes</span>
                         </div>
                     </div>
-                    <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center bg-gray-50 hover:bg-gray-100 rounded-full text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+                    <button onclick="toggleSidebar()" class="w-8 h-8 flex items-center justify-center bg-surface-main hover:bg-surface-hover rounded-full text-muted hover:text-main transition"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-5 space-y-6 no-scrollbar pb-20">
                     
-                    <!-- Gastos Fijos -->
-                    <div class="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50">
+                    <!-- Temas -->
+                    <div class="bg-surface-main p-4 rounded-2xl border border-surface">
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="font-bold text-blue-700 flex items-center gap-2"><i class="fa-solid fa-calendar-days"></i> Gastos Fijos</h3>
+                            <h3 class="font-bold text-main flex items-center gap-2"><i class="fa-solid fa-palette text-brand-500"></i> Apariencia</h3>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setTheme('default')" id="btn-theme-default" class="py-2 px-1 text-xs font-bold rounded-xl border-2 border-brand-500 bg-surface-card text-main flex flex-col items-center gap-1 transition-all">
+                                <div class="w-6 h-6 rounded-full bg-[#f8fafc] border border-gray-200"></div>
+                                Por defecto
+                            </button>
+                            <button onclick="setTheme('espacial')" id="btn-theme-espacial" class="py-2 px-1 text-xs font-bold rounded-xl border-2 border-transparent bg-surface-card text-main flex flex-col items-center gap-1 transition-all opacity-70 hover:opacity-100">
+                                <div class="w-6 h-6 rounded-full bg-[#07080c] border border-gray-700"></div>
+                                Espacial
+                            </button>
+                            <button onclick="setTheme('kwai')" id="btn-theme-kwai" class="py-2 px-1 text-xs font-bold rounded-xl border-2 border-transparent bg-surface-card text-main flex flex-col items-center gap-1 transition-all opacity-70 hover:opacity-100">
+                                <div class="w-6 h-6 rounded-full bg-[#f6d59b] border border-[#f4abcc]"></div>
+                                Kwai
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gastos Fijos -->
+                    <div class="bg-surface-main p-4 rounded-2xl border border-surface">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-bold text-blue-500 flex items-center gap-2"><i class="fa-solid fa-calendar-days"></i> Gastos Fijos</h3>
                             <button onclick="openFixedExpenseModal()" class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center hover:bg-blue-200 transition"><i class="fa-solid fa-plus text-sm"></i></button>
                         </div>
                         <ul id="sidebar-fixed-list" class="space-y-2"></ul>
@@ -311,8 +517,8 @@
                     <!-- Egresos -->
                     <div>
                         <div class="flex justify-between items-center mb-3 px-1">
-                            <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-arrow-trend-down text-rose-500"></i> Categorías Gasto</h3>
-                            <button onclick="openCategoryModal('expense')" class="text-rose-500 hover:bg-rose-50 px-2 py-1 rounded text-sm font-bold">+ Agregar</button>
+                            <h3 class="font-bold text-main flex items-center gap-2"><i class="fa-solid fa-arrow-trend-down text-rose-500"></i> Categorías Gasto</h3>
+                            <button onclick="openCategoryModal('expense')" class="text-rose-500 bg-surface-main hover:bg-surface-hover px-2 py-1 rounded text-sm font-bold border border-surface transition">+ Agregar</button>
                         </div>
                         <ul id="sidebar-expense-list" class="space-y-2"></ul>
                     </div>
@@ -320,14 +526,14 @@
                     <!-- Ingresos -->
                     <div>
                         <div class="flex justify-between items-center mb-3 px-1">
-                            <h3 class="font-bold text-gray-700 flex items-center gap-2"><i class="fa-solid fa-arrow-trend-up text-emerald-500"></i> Categorías Ingreso</h3>
-                            <button onclick="openCategoryModal('income')" class="text-emerald-500 hover:bg-emerald-50 px-2 py-1 rounded text-sm font-bold">+ Agregar</button>
+                            <h3 class="font-bold text-main flex items-center gap-2"><i class="fa-solid fa-arrow-trend-up text-emerald-500"></i> Categorías Ingreso</h3>
+                            <button onclick="openCategoryModal('income')" class="text-emerald-500 bg-surface-main hover:bg-surface-hover px-2 py-1 rounded text-sm font-bold border border-surface transition">+ Agregar</button>
                         </div>
                         <ul id="sidebar-income-list" class="space-y-2"></ul>
                     </div>
                     
-                    <div class="pt-4 border-t border-gray-100">
-                        <button onclick="logout()" class="w-full py-3 bg-gray-50 text-rose-500 font-bold rounded-xl hover:bg-rose-50 transition flex items-center justify-center gap-2">
+                    <div class="pt-4 border-t border-surface">
+                        <button onclick="logout()" class="w-full py-3 bg-surface-main text-rose-500 font-bold rounded-xl hover:bg-rose-100 hover:text-rose-600 transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión
                         </button>
                     </div>
@@ -335,156 +541,153 @@
             </div>
         </div>
 
+        <!-- Modal Nueva Transacción -->
         <div id="modal-transaction" class="absolute inset-0 z-50 modal-bg hidden flex flex-col justify-end">
-            <div class="bg-white w-full rounded-t-[2rem] p-6 transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
+            <div class="bg-surface-card w-full rounded-t-[2rem] p-6 transform transition-transform translate-y-full duration-300" id="modal-transaction-content">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 id="trans-title" class="text-2xl font-bold text-gray-800">Nuevo Movimiento</h3>
-                    <button onclick="closeModal('modal-transaction')" class="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+                    <h3 id="trans-title" class="text-2xl font-bold text-main">Nuevo Movimiento</h3>
+                    <button onclick="closeModal('modal-transaction')" class="w-8 h-8 bg-surface-main rounded-full flex items-center justify-center text-muted hover:text-main"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
                 <form id="form-transaction" class="space-y-5">
                     <input type="hidden" id="trans-type" value="">
                     
-                    <!-- Monto -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Monto</label>
+                        <label class="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Monto</label>
                         <div class="relative">
-                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-xl">$</span>
-                            <input type="number" id="trans-amount" step="0.01" required class="w-full pl-10 pr-4 py-4 rounded-2xl bg-gray-50 border-0 focus:ring-2 focus:ring-emerald-500 font-bold text-3xl text-gray-800" placeholder="0.00">
+                            <span class="absolute left-5 top-1/2 -translate-y-1/2 text-muted font-bold text-xl">$</span>
+                            <input type="number" id="trans-amount" step="0.01" required class="w-full pl-10 pr-4 py-4 rounded-2xl bg-surface-main border-0 focus:ring-2 focus:ring-brand-500 font-bold text-3xl text-main placeholder-muted" placeholder="0.00">
                         </div>
                     </div>
 
-                    <!-- Categoría (Dropdown Custom) -->
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Categoría</label>
+                        <label class="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Categoría</label>
                         <div class="custom-select-wrapper">
-                            <div class="custom-select bg-gray-50 border-0 py-3 rounded-2xl" id="custom-select-trigger" onclick="toggleCatSelect()">
+                            <div class="custom-select bg-surface-main border-0 py-3 rounded-2xl" id="custom-select-trigger" onclick="toggleCatSelect()">
                                 <div class="flex items-center gap-3" id="custom-select-display">
-                                    <span class="text-gray-400">Selecciona...</span>
+                                    <span class="text-muted">Selecciona...</span>
                                 </div>
-                                <i class="fa-solid fa-chevron-down text-gray-400 text-sm transition-transform duration-200" id="custom-select-arrow"></i>
+                                <i class="fa-solid fa-chevron-down text-muted text-sm transition-transform duration-200" id="custom-select-arrow"></i>
                             </div>
                             <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl" id="custom-options-list"></div>
                         </div>
-                        <input type="hidden" id="trans-category" required>
+                        <input type="hidden" id="trans-category">
                     </div>
 
-                    <!-- Nota y Adjunto -->
                     <div class="grid grid-cols-2 gap-3">
                         <div class="col-span-2">
-                            <input type="text" id="trans-note" class="w-full px-4 py-3 rounded-xl bg-gray-50 border-0 focus:ring-2 focus:ring-emerald-500 text-sm placeholder-gray-400" placeholder="Añade una nota (opcional)...">
+                            <input type="text" id="trans-note" class="w-full px-4 py-3 rounded-xl bg-surface-main border-0 focus:ring-2 focus:ring-brand-500 text-sm text-main placeholder-muted" placeholder="Añade una nota (opcional)...">
                         </div>
                         <div class="col-span-2">
-                            <label for="trans-image" class="cursor-pointer bg-white text-emerald-600 border border-emerald-100 px-4 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-emerald-50 transition font-medium text-sm">
+                            <label for="trans-image" class="cursor-pointer bg-surface-card text-brand-500 border border-brand-200 px-4 py-3 rounded-xl flex items-center justify-center gap-2 hover:bg-surface-hover transition font-medium text-sm">
                                 <i class="fa-solid fa-camera"></i> Escanear Comprobante
                             </label>
                             <input type="file" id="trans-image" accept="image/*" class="hidden" onchange="simulateOCR(this)">
                             <div id="ocr-status" class="mt-2 text-center text-xs hidden">
-                                <span id="trans-img-name" class="text-gray-500 block truncate"></span>
-                                <span id="ocr-msg" class="text-emerald-600 font-bold mt-1 block"></span>
+                                <span id="trans-img-name" class="text-muted block truncate"></span>
+                                <span id="ocr-msg" class="text-brand-500 font-bold mt-1 block"></span>
                             </div>
                         </div>
                     </div>
 
-                    <button type="submit" id="btn-save-trans" class="w-full text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200 mt-2 transition-transform transform active:scale-95 text-lg">
+                    <button type="submit" id="btn-save-trans" class="w-full text-white font-bold py-4 rounded-2xl shadow-lg mt-2 transition-transform transform active:scale-95 text-lg bg-brand-500 shadow-brand-200">
                         Guardar
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- Modal Nueva Categoría -->
         <div id="modal-category" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200" id="modal-category-content">
-                <h3 class="text-xl font-bold mb-4 text-gray-800" id="cat-modal-title">Nueva Categoría</h3>
+            <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200" id="modal-category-content">
+                <h3 class="text-xl font-bold mb-4 text-main" id="cat-modal-title">Nueva Categoría</h3>
                 <form id="form-category" class="space-y-4">
                     <input type="hidden" id="cat-type" value="">
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nombre</label>
-                        <input type="text" id="cat-name" required class="w-full p-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-emerald-500 font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Nombre</label>
+                        <input type="text" id="cat-name" required class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-medium text-main">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Color</label>
-                        <select id="cat-color" class="w-full p-3 bg-gray-50 border-0 rounded-xl font-medium focus:ring-2 focus:ring-emerald-500 appearance-none">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Color</label>
+                        <select id="cat-color" class="w-full p-3 bg-surface-main border-0 rounded-xl font-medium focus:ring-2 focus:ring-brand-500 appearance-none text-main">
+                            <option value="text-brand-500">Púrpura MyFinances</option>
                             <option value="text-rose-500">Rojo Pasión</option>
                             <option value="text-blue-500">Azul Océano</option>
                             <option value="text-emerald-500">Verde Vida</option>
                             <option value="text-amber-500">Naranja Sol</option>
-                            <option value="text-purple-500">Púrpura Místico</option>
                             <option value="text-pink-500">Rosa Chicle</option>
                             <option value="text-teal-500">Turquesa</option>
-                            <option value="text-slate-600">Gris Pizarra</option>
+                            <option value="text-slate-500">Gris Neutral</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Icono</label>
-                        <div class="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-2 bg-gray-50 rounded-xl no-scrollbar" id="icon-selector">
-                            <!-- Generado dinámicamente -->
-                        </div>
-                        <input type="hidden" id="cat-icon-selected" required>
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Icono</label>
+                        <div class="grid grid-cols-6 gap-2 max-h-40 overflow-y-auto p-2 bg-surface-main rounded-xl no-scrollbar" id="icon-selector"></div>
+                        <input type="hidden" id="cat-icon-selected">
                     </div>
                     <div class="flex gap-3 mt-6">
-                        <button type="button" onclick="closeModal('modal-category')" class="flex-1 py-3 text-gray-500 bg-gray-100 rounded-xl font-bold">Cancelar</button>
-                        <button type="submit" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-bold shadow-md shadow-emerald-200">Guardar</button>
+                        <button type="button" onclick="closeModal('modal-category')" class="flex-1 py-3 text-muted bg-surface-main rounded-xl font-bold hover:text-main">Cancelar</button>
+                        <button type="submit" class="flex-1 py-3 bg-brand-500 text-white rounded-xl font-bold shadow-md shadow-brand-200">Guardar</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <div id="modal-goals" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
-                <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
+            <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+                <div class="w-12 h-12 bg-brand-100 text-brand-600 rounded-full flex items-center justify-center mb-4">
                     <i class="fa-solid fa-bullseye text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-4">Ajustar Metas</h3>
+                <h3 class="text-xl font-bold text-main mb-4">Ajustar Metas</h3>
                 <form id="form-goals" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Presupuesto Mensual</label>
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Límite de Gasto Mensual</label>
                         <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                            <input type="number" id="goal-month" class="w-full pl-8 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-emerald-500 font-bold">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
+                            <input type="number" id="goal-month" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Meta de Ahorro Anual</label>
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Meta de Ahorro Anual</label>
                         <div class="relative">
-                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">$</span>
-                            <input type="number" id="goal-year" class="w-full pl-8 pr-4 py-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-emerald-500 font-bold">
+                            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
+                            <input type="number" id="goal-year" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main">
                         </div>
                     </div>
                     <div class="flex gap-3 mt-6">
-                        <button type="button" onclick="closeModal('modal-goals')" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold">Volver</button>
-                        <button type="submit" class="flex-1 py-3 bg-emerald-500 text-white rounded-xl font-bold shadow-md shadow-emerald-200">Guardar</button>
+                        <button type="button" onclick="closeModal('modal-goals')" class="flex-1 py-3 bg-surface-main text-muted hover:text-main rounded-xl font-bold">Volver</button>
+                        <button type="submit" class="flex-1 py-3 bg-brand-500 text-white rounded-xl font-bold shadow-md shadow-brand-200">Guardar</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <div id="modal-end-month" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center">
+            <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl text-center">
                 <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
                     <i class="fa-solid fa-flag-checkered text-3xl"></i>
                 </div>
-                <h3 class="text-2xl font-bold text-gray-800">¡Mes Terminado!</h3>
-                <p class="text-sm text-gray-500 mt-2 mb-6">Tu saldo restante se pasará en limpio al nuevo ciclo.</p>
+                <h3 class="text-2xl font-bold text-main">¡Mes Terminado!</h3>
+                <p class="text-sm text-muted mt-2 mb-6">Tu saldo restante se pasará en limpio al nuevo ciclo.</p>
                 
                 <form id="form-end-month" class="space-y-4 text-left">
-                    <div class="bg-gray-50 p-4 rounded-2xl mb-4 border border-gray-100 text-center">
-                        <span class="block text-xs font-bold text-gray-400 uppercase">Saldo a Transferir</span>
-                        <span id="end-month-balance" class="text-4xl font-black text-gray-800 mt-1 block">$0.00</span>
+                    <div class="bg-surface-main p-4 rounded-2xl mb-4 border border-surface text-center">
+                        <span class="block text-xs font-bold text-muted uppercase">Saldo a Transferir</span>
+                        <span id="end-month-balance" class="text-4xl font-black text-main mt-1 block">$0.00</span>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nueva Meta Mensual (Opcional)</label>
-                        <input type="number" id="end-new-goal" class="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Nueva Meta Mensual (Opcional)</label>
+                        <input type="number" id="end-new-goal" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Ingresar Sueldo Inicial (Opcional)</label>
-                        <input type="number" id="end-new-income" class="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Ingresar Sueldo Inicial (Opcional)</label>
+                        <input type="number" id="end-new-income" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main">
                     </div>
 
                     <div class="flex gap-3 pt-4">
-                        <button type="button" onclick="closeModal('modal-end-month')" class="w-1/3 py-3 text-gray-500 font-bold">Cancelar</button>
-                        <button type="submit" class="w-2/3 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 flex justify-center items-center gap-2">
+                        <button type="button" onclick="closeModal('modal-end-month')" class="w-1/3 py-3 text-muted font-bold hover:text-main">Cancelar</button>
+                        <button type="submit" class="w-2/3 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-lg shadow-blue-200 flex justify-center items-center gap-2 hover:bg-blue-700 transition">
                             Iniciar Ciclo <i class="fa-solid fa-rocket"></i>
                         </button>
                     </div>
@@ -493,66 +696,66 @@
         </div>
 
         <div id="modal-fixed-expense" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-sm p-6 shadow-2xl">
+            <div class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl">
                 <div class="flex items-center gap-3 mb-6">
                     <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center"><i class="fa-solid fa-anchor"></i></div>
-                    <h3 class="text-xl font-bold text-gray-800">Gasto Fijo</h3>
+                    <h3 class="text-xl font-bold text-main">Gasto Fijo</h3>
                 </div>
                 <form id="form-fixed-expense" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Nombre (Ej: Alquiler)</label>
-                        <input type="text" id="fixed-name" required class="w-full p-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Nombre (Ej: Alquiler)</label>
+                        <input type="text" id="fixed-name" required class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Monto Mensual</label>
-                        <input type="number" id="fixed-amount" required class="w-full p-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">Monto Mensual</label>
+                        <input type="number" id="fixed-amount" required class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main">
                     </div>
                     <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Color</label>
-                            <select id="fixed-color" class="w-full p-3 bg-gray-50 border-0 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm">
+                            <label class="block text-xs font-bold text-muted uppercase mb-1">Color</label>
+                            <select id="fixed-color" class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm text-main">
                                 <option value="text-blue-500">Azul</option>
                                 <option value="text-rose-500">Rojo</option>
-                                <option value="text-purple-500">Púrpura</option>
+                                <option value="text-brand-500">Púrpura MyFinances</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Icono</label>
-                            <button type="button" onclick="document.getElementById('fixed-icon-selector').classList.toggle('hidden')" class="w-full p-3 bg-gray-50 rounded-xl flex items-center justify-between text-gray-600">
+                            <label class="block text-xs font-bold text-muted uppercase mb-1">Icono</label>
+                            <button type="button" onclick="document.getElementById('fixed-icon-selector').classList.toggle('hidden')" class="w-full p-3 bg-surface-main rounded-xl flex items-center justify-between text-muted hover:text-main">
                                 <i id="fixed-icon-preview" class="fa-solid fa-house"></i>
                                 <i class="fa-solid fa-chevron-down text-xs"></i>
                             </button>
                         </div>
                     </div>
-                    <div id="fixed-icon-selector" class="hidden grid grid-cols-6 gap-2 max-h-32 overflow-y-auto p-2 bg-gray-50 rounded-xl no-scrollbar mt-2"></div>
+                    <div id="fixed-icon-selector" class="hidden grid grid-cols-6 gap-2 max-h-32 overflow-y-auto p-2 bg-surface-main rounded-xl no-scrollbar mt-2"></div>
                     <input type="hidden" id="fixed-icon-selected" value="fa-house">
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">¿Cuándo aplicar?</label>
-                        <select id="fixed-apply-when" class="w-full p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-medium">
+                        <label class="block text-xs font-bold text-muted uppercase mb-1">¿Cuándo aplicar?</label>
+                        <select id="fixed-apply-when" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-medium text-main">
                             <option value="next">A partir del próximo mes</option>
                             <option value="current">Descontar ahora mismo</option>
                         </select>
                     </div>
 
                     <div class="flex gap-3 mt-6">
-                        <button type="button" onclick="closeModal('modal-fixed-expense')" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold">Cancelar</button>
-                        <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md shadow-blue-200">Guardar Fijo</button>
+                        <button type="button" onclick="closeModal('modal-fixed-expense')" class="flex-1 py-3 bg-surface-main text-muted hover:text-main rounded-xl font-bold">Cancelar</button>
+                        <button type="submit" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold shadow-md shadow-blue-200 hover:bg-blue-700 transition">Guardar Fijo</button>
                     </div>
                 </form>
             </div>
         </div>
 
         <div id="modal-confirm" class="absolute inset-0 z-[80] modal-bg hidden flex items-center justify-center p-4">
-            <div class="bg-white rounded-3xl w-full max-w-xs p-6 shadow-2xl text-center scale-95 transition-transform" id="modal-confirm-content">
+            <div class="bg-surface-card rounded-3xl w-full max-w-xs p-6 shadow-2xl text-center scale-95 transition-transform" id="modal-confirm-content">
                 <div class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">¿Estás seguro?</h3>
-                <p id="confirm-msg" class="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
+                <h3 class="text-xl font-bold text-main mb-2">¿Estás seguro?</h3>
+                <p id="confirm-msg" class="text-sm text-muted mb-6">Esta acción no se puede deshacer.</p>
                 <div class="flex gap-3">
-                    <button id="btn-confirm-cancel" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold">Cancelar</button>
-                    <button id="btn-confirm-ok" class="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold shadow-md shadow-rose-200">Sí, borrar</button>
+                    <button id="btn-confirm-cancel" class="flex-1 py-3 bg-surface-main text-muted hover:text-main rounded-xl font-bold">Cancelar</button>
+                    <button id="btn-confirm-ok" class="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold shadow-md shadow-rose-200 hover:bg-rose-600 transition">Sí, borrar</button>
                 </div>
             </div>
         </div>
@@ -567,9 +770,6 @@
         import { getAuth, signInWithCustomToken, signInAnonymously, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, deleteDoc, collection, getDocs, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // =====================================================================
-        // 🔥 AQUI CORREGIMOS EL ERROR (Una sola declaración limpia)
-        // =====================================================================
         const firebaseConfig = {
             apiKey: "AIzaSyDOf1RSIu3p309DXiylW6oAzIrjm5FZwC8",
             authDomain: "app-idk-61fda.firebaseapp.com",
@@ -587,7 +787,7 @@
             auth = getAuth(app);
         } catch(e) {
             console.error("Firebase Auth no configurado aún o API Key inválida.", e);
-            document.getElementById('screen-loading').innerHTML = '<div class="text-center p-6"><i class="fa-solid fa-triangle-exclamation text-rose-500 text-5xl mb-4"></i><p class="font-bold">Error en Firebase</p><p class="text-xs text-gray-500 mt-2">Revisa la consola.</p></div>';
+            document.getElementById('screen-loading').innerHTML = '<div class="text-center p-6"><i class="fa-solid fa-triangle-exclamation text-rose-500 text-5xl mb-4"></i><p class="font-bold">Error en Firebase</p><p class="text-xs text-muted mt-2">Revisa la consola.</p></div>';
         }
 
         window.appState = {
@@ -596,7 +796,8 @@
                 categories: { expense: [], income: [] },
                 fixedExpenses: [],
                 goals: { monthly: 0, annual: 0 },
-                currentMonthId: ''
+                currentMonthId: '',
+                theme: 'default'
             },
             transactions: [],
             viewingMonthId: null
@@ -605,6 +806,58 @@
         let currentChart = null;
         let unsubscribeData = null;
         let unsubscribeTrans = null;
+
+        // --- Generador de Fondos Animados ---
+        function generateStars() {
+            const container = document.getElementById('stars-layer');
+            if(!container) return;
+            container.innerHTML = ''; 
+            const numStars = 60; 
+            for(let i=0; i<numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                const size = Math.random() * 3 + 1; 
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.setProperty('--duration', `${Math.random() * 3 + 1.5}s`);
+                star.style.setProperty('--max-opacity', `${Math.random() * 0.6 + 0.4}`); 
+                star.style.animationDelay = `${Math.random() * 5}s`;
+                container.appendChild(star);
+            }
+        }
+        
+        function generateKawaiiBackground() {
+            const container = document.getElementById('kawaii-layer');
+            if(!container) return;
+            container.innerHTML = ''; 
+            const numBlobs = 15; 
+            const colors = ['#f4abcc', '#c0dcc5', '#f6d59b', '#7f579f']; 
+            
+            for(let i=0; i<numBlobs; i++) {
+                const blob = document.createElement('div');
+                blob.classList.add('kawaii-blob');
+                
+                const size = Math.random() * 40 + 20; 
+                const left = Math.random() * 100; 
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const duration = Math.random() * 15 + 10; 
+                const delay = Math.random() * 10; 
+                
+                blob.style.width = `${size}px`;
+                blob.style.height = `${size}px`;
+                blob.style.left = `${left}%`;
+                blob.style.backgroundColor = color;
+                blob.style.setProperty('--duration', `${duration}s`);
+                blob.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(blob);
+            }
+        }
+
+        generateStars();
+        generateKawaiiBackground();
 
         const availableIcons = [
             'fa-basket-shopping', 'fa-cart-shopping', 'fa-house', 'fa-couch', 'fa-bolt', 'fa-wifi', 'fa-droplet',
@@ -618,19 +871,19 @@
             expense: [
                 { id: 'e1', name: 'Alimentos', icon: 'fa-basket-shopping', color: 'text-pink-500' },
                 { id: 'e2', name: 'Casa', icon: 'fa-house', color: 'text-blue-500' },
-                { id: 'e3', name: 'Transporte', icon: 'fa-car', color: 'text-slate-600' },
+                { id: 'e3', name: 'Transporte', icon: 'fa-car', color: 'text-slate-500' },
                 { id: 'e4', name: 'Ocio', icon: 'fa-martini-glass-citrus', color: 'text-amber-500' }
             ],
             income: [
-                { id: 'i1', name: 'Salario', icon: 'fa-money-bill-wave', color: 'text-emerald-500' },
+                { id: 'i1', name: 'Salario', icon: 'fa-money-bill-wave', color: 'text-brand-500' },
                 { id: 'i2', name: 'Ahorros', icon: 'fa-piggy-bank', color: 'text-teal-500' }
             ]
         };
 
         const colorMap = {
-            'text-pink-500': '#ec4899', 'text-blue-500': '#3b82f6', 'text-slate-600': '#475569',
+            'text-pink-500': '#ec4899', 'text-blue-500': '#3b82f6', 'text-slate-500': '#64748b',
             'text-teal-500': '#14b8a6', 'text-rose-500': '#f43f5e', 'text-purple-500': '#a855f7',
-            'text-amber-500': '#f59e0b', 'text-emerald-500': '#10b981'
+            'text-amber-500': '#f59e0b', 'text-brand-500': '#8b5cf6'
         };
 
         function getMainDocRef() { return doc(db, 'artifacts', appIdStr, 'users', window.appState.user.uid, 'data', 'main'); }
@@ -652,6 +905,10 @@
                     window.appState.user = null;
                     if(unsubscribeData) unsubscribeData();
                     if(unsubscribeTrans) unsubscribeTrans();
+                    
+                    document.body.className = "h-screen w-screen flex items-center justify-center transition-colors duration-300";
+                    updateThemeUI('default');
+
                     if(loader) loader.classList.add('hidden');
                     window.navigate('screen-login');
                 }
@@ -671,19 +928,27 @@
                     fixedExpenses: [],
                     goals: { monthly: 0, annual: 0 },
                     currentMonthId: currentMonthId,
-                    profile: { name: window.appState.user.displayName || 'Usuario' }
+                    profile: { name: window.appState.user.displayName || 'Usuario' },
+                    theme: 'default'
                 };
                 await setDoc(mainRef, initialData);
                 window.appState.data = initialData;
             } else {
                 window.appState.data = docSnap.data();
+                if(!window.appState.data.theme) window.appState.data.theme = 'default';
             }
 
             window.appState.viewingMonthId = window.appState.data.currentMonthId;
+            applyTheme(window.appState.data.theme);
 
             unsubscribeData = onSnapshot(getMainDocRef(), (snapshot) => {
                 if (snapshot.exists()) {
-                    window.appState.data = snapshot.data();
+                    const newData = snapshot.data();
+                    if(window.appState.data.theme !== newData.theme) {
+                        applyTheme(newData.theme || 'default');
+                    }
+
+                    window.appState.data = newData;
                     document.getElementById('sidebar-user-name').innerText = window.appState.data.profile?.name || 'Usuario';
                     
                     if(!window.appState.viewingMonthId || window.appState.viewingMonthId === snapshot.data().currentMonthId) {
@@ -710,6 +975,37 @@
             await updateDoc(getMainDocRef(), window.appState.data);
         }
 
+        window.setTheme = async (themeName) => {
+            if(window.appState.data.theme === themeName) return;
+            window.appState.data.theme = themeName;
+            applyTheme(themeName);
+            await saveMainData();
+            window.showToast(`Tema actualizado`, 'success');
+        }
+
+        function applyTheme(themeName) {
+            const body = document.getElementById('app-body');
+            body.className = "h-screen w-screen flex items-center justify-center transition-colors duration-300";
+            if (themeName !== 'default') body.classList.add(`theme-${themeName}`);
+            updateThemeUI(themeName);
+            if(window.appState.data && window.appState.transactions) window.updateDashboardUI();
+        }
+
+        function updateThemeUI(activeTheme) {
+            const themes = ['default', 'espacial', 'kwai'];
+            themes.forEach(t => {
+                const btn = document.getElementById(`btn-theme-${t}`);
+                if(!btn) return;
+                if (t === activeTheme) {
+                    btn.classList.add('border-brand-500');
+                    btn.classList.remove('border-transparent', 'opacity-70');
+                } else {
+                    btn.classList.remove('border-brand-500');
+                    btn.classList.add('border-transparent', 'opacity-70');
+                }
+            });
+        }
+
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
@@ -731,7 +1027,8 @@
                     fixedExpenses: [],
                     goals: { monthly: 0, annual: 0 },
                     currentMonthId: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`,
-                    profile: { name, docNum, email }
+                    profile: { name, docNum, email },
+                    theme: 'default'
                 };
                 await setDoc(doc(db, 'artifacts', appIdStr, 'users', cred.user.uid, 'data', 'main'), initialData);
                 window.showToast('¡Registro exitoso!', 'success');
@@ -762,13 +1059,23 @@
             e.preventDefault();
             const email = document.getElementById('forgot-email').value;
             const btn = document.getElementById('btn-forgot');
+            const errorDiv = document.getElementById('forgot-error-msg');
+            
+            errorDiv.classList.add('hidden');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            
             try {
                 await sendPasswordResetEmail(auth, email);
                 window.showToast('Enlace enviado. Revisa tu bandeja de entrada.', 'success');
                 setTimeout(() => window.navigate('screen-login'), 2000);
             } catch (error) {
-                window.showToast('Error al enviar correo', 'error');
+                let msj = 'Error interno al enviar el correo.';
+                if(error.code === 'auth/user-not-found') msj = 'No existe ninguna cuenta registrada con este correo.';
+                else if(error.code === 'auth/invalid-email') msj = 'El formato del correo electrónico no es válido.';
+                else msj = error.message; 
+                
+                errorDiv.innerText = msj;
+                errorDiv.classList.remove('hidden');
             } finally {
                 btn.innerHTML = 'Enviar Enlace';
             }
@@ -821,14 +1128,9 @@
         function getAvailableMonths() {
             const data = window.appState.data;
             if(!data) return [];
-            
             const monthsSet = new Set();
             monthsSet.add(data.currentMonthId); 
-            
-            window.appState.transactions.forEach(t => {
-                if(t.monthId) monthsSet.add(t.monthId);
-            });
-            
+            window.appState.transactions.forEach(t => { if(t.monthId) monthsSet.add(t.monthId); });
             return Array.from(monthsSet).sort().reverse();
         }
 
@@ -852,10 +1154,10 @@
                 const isCurrent = m === window.appState.data.currentMonthId;
                 const isSelected = m === viewingMonth;
                 list.insertAdjacentHTML('beforeend', `
-                    <div class="custom-option ${isSelected ? 'bg-emerald-50' : ''}" onclick="selectMonth('${m}')">
+                    <div class="custom-option ${isSelected ? 'bg-surface-hover' : ''}" onclick="selectMonth('${m}')">
                         <div class="flex items-center justify-between w-full">
-                            <span class="font-medium ${isSelected ? 'text-emerald-700 font-bold' : 'text-gray-700'}">${formatMonthName(m)} ${isCurrent ? '<span class="text-[10px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded ml-1">Actual</span>' : ''}</span>
-                            ${isSelected ? '<i class="fa-solid fa-check text-emerald-500 text-xs"></i>' : ''}
+                            <span class="font-medium ${isSelected ? 'text-brand-600 font-bold' : 'text-main'}">${formatMonthName(m)} ${isCurrent ? '<span class="text-[10px] bg-brand-100 text-brand-700 px-1.5 py-0.5 rounded ml-1">Actual</span>' : ''}</span>
+                            ${isSelected ? '<i class="fa-solid fa-check text-brand-500 text-xs"></i>' : ''}
                         </div>
                     </div>
                 `);
@@ -864,23 +1166,16 @@
             const isReadOnly = viewingMonth !== window.appState.data.currentMonthId;
             const readonlyWarning = document.getElementById('readonly-warning');
             const btnReturn = document.getElementById('btn-return-current');
-            
             const fabExpense = document.getElementById('btn-expense');
             const fabIncome = document.getElementById('btn-income');
             const fabGoals = document.getElementById('btn-goals');
             
             if(isReadOnly) {
-                readonlyWarning.classList.remove('hidden');
-                btnReturn.classList.remove('hidden');
-                fabExpense.classList.add('disabled');
-                fabIncome.classList.add('disabled');
-                fabGoals.classList.add('disabled');
+                readonlyWarning.classList.remove('hidden'); btnReturn.classList.remove('hidden');
+                fabExpense.classList.add('disabled'); fabIncome.classList.add('disabled'); fabGoals.classList.add('disabled');
             } else {
-                readonlyWarning.classList.add('hidden');
-                btnReturn.classList.add('hidden');
-                fabExpense.classList.remove('disabled');
-                fabIncome.classList.remove('disabled');
-                fabGoals.classList.remove('disabled');
+                readonlyWarning.classList.add('hidden'); btnReturn.classList.add('hidden');
+                fabExpense.classList.remove('disabled'); fabIncome.classList.remove('disabled'); fabGoals.classList.remove('disabled');
             }
         }
 
@@ -914,7 +1209,6 @@
         document.addEventListener('click', (e) => {
             const monthWrapper = document.querySelector('.custom-select-wrapper.w-32');
             if (monthWrapper && !monthWrapper.contains(e.target)) window.closeMonthSelect();
-            
             const catWrapper = document.querySelector('#form-transaction .custom-select-wrapper');
             if (catWrapper && !catWrapper.contains(e.target)) window.closeCatSelect();
         });
@@ -934,7 +1228,7 @@
                 data.fixedExpenses.forEach(f => expenseDataByCategory[f.name] = { amount: 0, color: f.color });
             }
             
-            expenseDataByCategory['Saldo Mes Anterior'] = { amount: 0, color: 'text-slate-600' };
+            expenseDataByCategory['Saldo Mes Anterior'] = { amount: 0, color: 'text-slate-500' };
 
             const monthTransactions = window.appState.transactions.filter(t => t.monthId === viewingMonth);
 
@@ -942,11 +1236,8 @@
                 if (t.type === 'income') totalIncome += t.amount;
                 else if (t.type === 'expense') {
                     totalExpense += t.amount;
-                    if(expenseDataByCategory[t.categoryName]) {
-                        expenseDataByCategory[t.categoryName].amount += t.amount;
-                    } else {
-                        expenseDataByCategory[t.categoryName] = { amount: t.amount, color: 'text-slate-600' };
-                    }
+                    if(expenseDataByCategory[t.categoryName]) expenseDataByCategory[t.categoryName].amount += t.amount;
+                    else expenseDataByCategory[t.categoryName] = { amount: t.amount, color: 'text-slate-500' };
                 }
             });
 
@@ -956,45 +1247,85 @@
             document.getElementById('total-ingresos').innerText = `+${formatter.format(totalIncome)}`;
             document.getElementById('total-egresos').innerText = `-${formatter.format(totalExpense)}`;
             document.getElementById('balance-total').innerText = formatter.format(balance);
-            document.getElementById('display-goal-month').innerText = formatter.format(data.goals.monthly);
-            document.getElementById('display-goal-year').innerText = formatter.format(data.goals.annual);
+            
+            const metaMes = parseFloat(data.goals.monthly) || 0;
+            let percentMes = 0;
+            if (metaMes > 0) {
+                percentMes = balance > 0 ? (balance / metaMes) * 100 : 0;
+                percentMes = Math.min(Math.max(percentMes, 0), 100);
+            }
+            document.getElementById('display-goal-month-text').innerText = metaMes > 0 ? `${Math.round(percentMes)}%` : 'Sin meta';
+            document.getElementById('progress-fill-month').style.width = `${percentMes}%`;
+
+            const metaAnual = parseFloat(data.goals.annual) || 0;
+            let percentAnual = 0;
+            if (metaAnual > 0) {
+                const currentYear = viewingMonth.split('-')[0];
+                let balanceAnual = 0;
+                window.appState.transactions.forEach(t => {
+                    if(t.monthId.startsWith(currentYear)) {
+                         if (t.type === 'income') balanceAnual += t.amount;
+                         else if (t.type === 'expense') balanceAnual -= t.amount;
+                    }
+                });
+                percentAnual = balanceAnual > 0 ? (balanceAnual / metaAnual) * 100 : 0;
+                percentAnual = Math.min(Math.max(percentAnual, 0), 100);
+            }
+            document.getElementById('display-goal-year-text').innerText = metaAnual > 0 ? `${Math.round(percentAnual)}%` : 'Sin meta';
+            document.getElementById('progress-fill-year').style.width = `${percentAnual}%`;
 
             const badge = document.getElementById('balance-badge');
-            const icon = document.getElementById('status-icon');
+            const logo = document.getElementById('status-logo');
             
             if (balance > 0) {
-                badge.className = "bg-emerald-100 text-emerald-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-emerald-200 transition-colors";
-                icon.className = "fa-solid fa-face-smile text-4xl text-emerald-500 mb-2 transition-colors";
+                badge.className = "bg-emerald-100 text-emerald-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-emerald-200 transition-colors duration-500";
+                if(logo) logo.style.transform = "scale(1.1)";
             } else if (balance < 0) {
-                badge.className = "bg-rose-100 text-rose-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-rose-200 transition-colors";
-                icon.className = "fa-solid fa-face-frown text-4xl text-rose-500 mb-2 transition-colors";
+                badge.className = "bg-rose-100 text-rose-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-rose-200 transition-colors duration-500";
+                if(logo) logo.style.transform = "scale(0.9)";
             } else {
-                badge.className = "bg-gray-100 text-gray-800 px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-gray-200 transition-colors";
-                icon.className = "fa-solid fa-piggy-bank text-4xl text-gray-300 mb-2 transition-colors";
+                badge.className = "bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500";
+                if(logo) logo.style.transform = "scale(1)";
             }
 
-            renderChart(expenseDataByCategory);
-            renderCategoryRing(data.categories.expense);
+            try { if (typeof Chart !== 'undefined') renderChart(expenseDataByCategory); } 
+            catch (e) { console.error('Error rendering chart:', e); }
+            
+            try { renderCategoryRing(data.categories.expense); } 
+            catch (e) { console.error('Error rendering ring:', e); }
         }
 
         function renderChart(expensesMap) {
             const ctx = document.getElementById('mainChart').getContext('2d');
             const labels = []; const dataValues = []; const backgroundColors = [];
             let hasData = false;
+            
+            const defaultChartColor = '#94a3b8';
 
             for (const [catName, data] of Object.entries(expensesMap)) {
                 if (data.amount > 0) {
                     hasData = true; labels.push(catName); dataValues.push(data.amount);
-                    backgroundColors.push(colorMap[data.color] || '#94a3b8');
+                    backgroundColors.push(colorMap[data.color] || defaultChartColor);
                 }
             }
-            if (!hasData) { labels.push('Sin gastos'); dataValues.push(1); backgroundColors.push('#f1f5f9'); }
+            
+            if (!hasData) { 
+                labels.push('Sin gastos'); dataValues.push(1); 
+                const isDark = document.body.classList.contains('theme-espacial');
+                backgroundColors.push(isDark ? '#2e2661' : '#f1f5f9'); 
+            }
             
             if (currentChart) currentChart.destroy();
 
+            const getBorderColor = () => {
+                if(document.body.classList.contains('theme-espacial')) return '#1c1b39';
+                if(document.body.classList.contains('theme-kwai')) return '#ffffff';
+                return '#ffffff';
+            };
+
             currentChart = new Chart(ctx, {
                 type: 'doughnut',
-                data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: '#ffffff', hoverOffset: 4 }] },
+                data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: getBorderColor(), hoverOffset: 4 }] },
                 options: {
                     responsive: true, maintainAspectRatio: false, cutout: '72%',
                     plugins: {
@@ -1009,9 +1340,9 @@
         function renderCategoryRing(categories) {
             const ring = document.getElementById('category-ring');
             ring.innerHTML = '';
-            const radius = 160; const center = { x: 130, y: 130 };
-            const limit = Math.min(categories.length, 8); 
             
+            const radius = 150; const center = { x: 130, y: 130 };
+            const limit = categories.length; 
             const isReadOnly = window.appState.viewingMonthId !== window.appState.data.currentMonthId;
 
             for(let i=0; i<limit; i++){
@@ -1027,9 +1358,7 @@
                 div.style.left = `${x}px`; div.style.top = `${y}px`;
                 div.innerHTML = `<i class="fa-solid ${cat.icon}"></i>`;
                 
-                if(!isReadOnly) {
-                    div.onclick = () => window.openTransactionModal('expense', cat.id);
-                }
+                if(!isReadOnly) div.onclick = () => window.openTransactionModal('expense', cat.id);
                 ring.appendChild(div);
             }
         }
@@ -1054,10 +1383,10 @@
         window.selectCustomOption = (id, name, iconClass, colorClass) => {
             document.getElementById('trans-category').value = id;
             document.getElementById('custom-select-display').innerHTML = `
-                <div class="w-7 h-7 rounded-full bg-white flex items-center justify-center ${colorClass} shadow-sm border border-gray-100">
+                <div class="w-7 h-7 rounded-full bg-surface-main flex items-center justify-center ${colorClass} shadow-sm border border-surface">
                     <i class="fa-solid ${iconClass} text-xs"></i>
                 </div>
-                <span class="font-bold text-gray-700">${name}</span>
+                <span class="font-bold text-main">${name}</span>
             `;
             window.closeCatSelect();
         }
@@ -1069,7 +1398,7 @@
             document.getElementById('trans-type').value = type;
             document.getElementById('trans-category').value = '';
             document.getElementById('ocr-status').classList.add('hidden');
-            document.getElementById('custom-select-display').innerHTML = '<span class="text-gray-400 font-medium">Selecciona una categoría...</span>';
+            document.getElementById('custom-select-display').innerHTML = '<span class="text-muted font-medium">Selecciona una categoría...</span>';
             
             const categories = window.appState.data.categories[type];
             const list = document.getElementById('custom-options-list');
@@ -1079,8 +1408,8 @@
                 list.insertAdjacentHTML('beforeend', `
                     <div class="custom-option" onclick="selectCustomOption('${cat.id}', '${cat.name}', '${cat.icon}', '${cat.color}')">
                         <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center ${cat.color} border border-gray-100 shadow-sm"><i class="fa-solid ${cat.icon}"></i></div>
-                            <span class="font-bold text-gray-700">${cat.name}</span>
+                            <div class="w-8 h-8 rounded-full bg-surface-main flex items-center justify-center ${cat.color} border border-surface shadow-sm"><i class="fa-solid ${cat.icon}"></i></div>
+                            <span class="font-bold text-main">${cat.name}</span>
                         </div>
                     </div>
                 `);
@@ -1094,6 +1423,7 @@
             const isInc = type === 'income';
             document.getElementById('trans-title').innerText = isInc ? 'Nuevo Ingreso' : 'Nuevo Egreso';
             const btn = document.getElementById('btn-save-trans');
+            
             btn.className = `w-full text-white font-bold py-4 rounded-2xl shadow-lg mt-2 transition-transform transform active:scale-95 text-lg ${isInc ? 'bg-emerald-500 shadow-emerald-200' : 'bg-rose-500 shadow-rose-200'}`;
 
             const modal = document.getElementById('modal-transaction');
@@ -1111,7 +1441,6 @@
                 document.getElementById('trans-img-name').innerText = input.files[0].name;
                 const msg = document.getElementById('ocr-msg');
                 msg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo comprobante...';
-                
                 setTimeout(() => {
                     document.getElementById('trans-amount').value = (Math.random() * 5000 + 100).toFixed(2);
                     msg.innerHTML = '<i class="fa-solid fa-bolt"></i> ¡Monto detectado!';
@@ -1125,7 +1454,8 @@
             const type = document.getElementById('trans-type').value;
             const amount = parseFloat(document.getElementById('trans-amount').value);
             const catId = document.getElementById('trans-category').value;
-            if(!catId) return window.showToast('Selecciona una categoría', 'error');
+            
+            if(!catId) return window.showToast('Selecciona una categoría del menú desplegable', 'error');
 
             const categoryDef = window.appState.data.categories[type].find(c => c.id === catId);
             const btn = document.getElementById('btn-save-trans');
@@ -1150,15 +1480,19 @@
                 availableIcons.forEach(icon => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'icon-btn w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-50 transition';
-                    btn.innerHTML = `<i class="fa-solid ${icon} text-gray-500"></i>`;
+                    btn.className = 'icon-btn w-10 h-10 rounded-xl bg-surface-card border border-surface flex items-center justify-center hover:bg-surface-hover transition';
+                    btn.innerHTML = `<i class="fa-solid ${icon} text-muted"></i>`;
                     btn.onclick = () => {
                         container.querySelectorAll('.icon-btn').forEach(b => {
-                            b.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-blue-500', 'bg-blue-50');
+                            b.classList.remove('border-brand-500', 'bg-brand-50', 'border-blue-500', 'bg-blue-50');
                         });
-                        const colorClass = id.includes('fixed') ? 'blue' : 'emerald';
-                        btn.classList.add(`border-${colorClass}-500`, `bg-${colorClass}-50`);
+                        const colorClass = id.includes('fixed') ? 'blue' : 'brand';
+                        btn.classList.add(`border-${colorClass}-500`, `bg-brand-50`); 
                         
+                        container.querySelectorAll('.icon-btn i').forEach(i => { i.classList.remove('text-brand-600', 'text-blue-600'); i.classList.add('text-muted')});
+                        btn.querySelector('i').classList.remove('text-muted');
+                        btn.querySelector('i').classList.add(`text-${colorClass}-600`);
+
                         if(id === 'icon-selector') document.getElementById('cat-icon-selected').value = icon;
                         else {
                             document.getElementById('fixed-icon-selected').value = icon;
@@ -1175,6 +1509,14 @@
             document.getElementById('cat-type').value = type;
             document.getElementById('cat-modal-title').innerText = type === 'income' ? 'Nueva Categoría Ingreso' : 'Nueva Categoría Gasto';
             document.getElementById('form-category').reset();
+            document.getElementById('cat-icon-selected').value = ''; 
+            
+            document.querySelectorAll('#icon-selector .icon-btn').forEach(b => {
+                b.classList.remove('border-brand-500', 'bg-brand-50');
+                b.querySelector('i').classList.remove('text-brand-600');
+                b.querySelector('i').classList.add('text-muted');
+            });
+
             const modal = document.getElementById('modal-category');
             const content = document.getElementById('modal-category-content');
             modal.classList.remove('hidden');
@@ -1185,11 +1527,16 @@
             e.preventDefault();
             const type = document.getElementById('cat-type').value;
             const data = window.appState.data;
+            const catName = document.getElementById('cat-name').value;
+            const catIcon = document.getElementById('cat-icon-selected').value;
+
+            if (!catIcon) return window.showToast('Por favor selecciona un icono haciendo clic en uno', 'error');
+
             data.categories[type].push({
                 id: 'c_' + Date.now(),
-                name: document.getElementById('cat-name').value,
+                name: catName,
                 color: document.getElementById('cat-color').value,
-                icon: document.getElementById('cat-icon-selected').value || 'fa-tag'
+                icon: catIcon
             });
             await saveMainData();
             window.closeModal('modal-category');
@@ -1204,12 +1551,12 @@
                 list.innerHTML = '';
                 data.categories[type].forEach(cat => {
                     list.insertAdjacentHTML('beforeend', `
-                        <li class="flex justify-between items-center bg-gray-50 p-3 rounded-xl border border-gray-100 mb-2">
+                        <li class="flex justify-between items-center bg-surface-main p-3 rounded-xl border border-surface mb-2 transition-colors">
                             <div class="flex items-center gap-3">
-                                <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center ${cat.color} shadow-sm border border-gray-100"><i class="fa-solid ${cat.icon} text-sm"></i></div>
-                                <span class="text-sm font-bold text-gray-700">${cat.name}</span>
+                                <div class="w-8 h-8 rounded-full bg-surface-card flex items-center justify-center ${cat.color} shadow-sm border border-surface"><i class="fa-solid ${cat.icon} text-sm"></i></div>
+                                <span class="text-sm font-bold text-main">${cat.name}</span>
                             </div>
-                            <button onclick="askDeleteCategory('${type}', '${cat.id}')" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-rose-500 hover:bg-rose-50 rounded-full transition"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                            <button onclick="askDeleteCategory('${type}', '${cat.id}')" class="w-8 h-8 flex items-center justify-center text-muted hover:text-rose-500 hover:bg-rose-50 rounded-full transition"><i class="fa-solid fa-trash-can text-sm"></i></button>
                         </li>
                     `);
                 });
@@ -1217,19 +1564,19 @@
 
             const fixedList = document.getElementById('sidebar-fixed-list');
             fixedList.innerHTML = '';
-            if(data.fixedExpenses.length === 0) fixedList.innerHTML = `<li class="text-xs text-blue-400 text-center py-2 bg-blue-50/50 rounded-lg border border-dashed border-blue-200">Sin gastos fijos activos.</li>`;
+            if(data.fixedExpenses.length === 0) fixedList.innerHTML = `<li class="text-xs text-blue-400 text-center py-2 bg-blue-500/10 rounded-lg border border-dashed border-blue-200/50">Sin gastos fijos activos.</li>`;
             
             data.fixedExpenses.forEach(fe => {
                 fixedList.insertAdjacentHTML('beforeend', `
-                    <li class="flex justify-between items-center bg-white p-3 rounded-xl shadow-sm border border-blue-50 mb-2">
+                    <li class="flex justify-between items-center bg-surface-card p-3 rounded-xl shadow-sm border border-surface mb-2 transition-colors">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center ${fe.color}"><i class="fa-solid ${fe.icon}"></i></div>
                             <div class="flex flex-col">
-                                <span class="text-sm font-bold text-gray-700">${fe.name}</span>
+                                <span class="text-sm font-bold text-main">${fe.name}</span>
                                 <span class="text-xs text-rose-500 font-bold">-$${fe.amount}</span>
                             </div>
                         </div>
-                        <button onclick="askDeleteFixed('${fe.id}')" class="text-gray-400 hover:text-rose-500 p-2"><i class="fa-solid fa-trash-can"></i></button>
+                        <button onclick="askDeleteFixed('${fe.id}')" class="text-muted hover:text-rose-500 p-2"><i class="fa-solid fa-trash-can"></i></button>
                     </li>
                 `);
             });
@@ -1348,7 +1695,7 @@
             
             const balEl = document.getElementById('end-month-balance');
             balEl.innerText = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(bal);
-            balEl.className = `text-4xl font-black mt-1 block ${bal >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+            balEl.className = `text-4xl font-black mt-1 block ${bal >= 0 ? 'text-brand-500' : 'text-rose-500'}`;
 
             document.getElementById('end-new-goal').value = data.goals.monthly || '';
             document.getElementById('end-new-income').value = ''; 
@@ -1398,7 +1745,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const isOk = type === 'success';
-            toast.className = `text-white px-5 py-3 rounded-full shadow-lg transform transition-all duration-300 translate-y-[-100%] opacity-0 flex items-center font-bold text-sm ${isOk ? 'bg-emerald-500' : (type === 'error' ? 'bg-rose-500' : 'bg-gray-800')}`;
+            toast.className = `text-white px-5 py-3 rounded-full shadow-lg transform transition-all duration-300 translate-y-[-100%] opacity-0 flex items-center font-bold text-sm ${isOk ? 'bg-brand-500' : (type === 'error' ? 'bg-rose-500' : 'bg-gray-800')}`;
             toast.innerHTML = `<i class="fa-solid ${isOk ? 'fa-check-circle' : 'fa-circle-exclamation'} mr-2"></i> ${msg}`;
             container.appendChild(toast);
             setTimeout(() => toast.classList.remove('translate-y-[-100%]', 'opacity-0'), 10);
