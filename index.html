@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#f8fafc" id="meta-theme-color">
-    <title>Órbita - Finanza Personal</title>
+    <title>Órbita - Finanzas Personales</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -114,11 +114,10 @@
 
         .modal-bg { background-color: var(--modal-overlay); backdrop-filter: blur(4px); transition: background-color 0.3s; }
 
-        /* Gráfico ampliado para aprovechar el espacio al máximo con círculo perfecto */
         .chart-container { 
             position: relative; 
-            width: 100%; 
-            max-width: 380px; 
+            width: 82%; 
+            max-width: 320px; 
             aspect-ratio: 1 / 1; 
             margin: 0 auto; 
             flex-shrink: 0; 
@@ -520,7 +519,7 @@
                         <label class="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Categoría</label>
                         <div class="custom-select-wrapper">
                             <div class="custom-select bg-surface-main border-0 py-3 rounded-2xl transition-colors" id="custom-select-trigger" onclick="toggleCatSelect()">
-                                <div class="flex items-center gap-3" id="custom-select-display"><span class="text-muted">Selecciona...</span></div>
+                                <div class="flex items-center gap-3" id="custom-select-display"><span class="text-muted">Selecciona una categoría...</span></div>
                                 <i class="fa-solid fa-chevron-down text-muted text-sm transition-transform duration-200" id="custom-select-arrow"></i>
                             </div>
                             <div class="custom-options no-scrollbar border-0 shadow-2xl rounded-2xl" id="custom-options-list"></div>
@@ -1163,7 +1162,6 @@
             if (!document.querySelector('#form-transaction .custom-select-wrapper')?.contains(e.target)) window.closeCatSelect();
         });
 
-        /* --- LOGICA SWAP MODO EDICION CATEGORIAS --- */
         let isSwapMode = false;
         let swapIndexA = null;
 
@@ -1190,7 +1188,7 @@
             }
             if(swapIndexA === null) {
                 swapIndexA = index;
-                renderCategoryRing(window.appState.data.categories.expense); // Refresca visual
+                renderCategoryRing(window.appState.data.categories.expense); 
             } else {
                 if(swapIndexA !== index) {
                     const cats = window.appState.data.categories.expense;
@@ -1279,7 +1277,7 @@
             currentChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: getBorderColor(), hoverOffset: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '74%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { if(!hasData) return 'Sin datos'; return `${ctx.label}: $${ctx.parsed.toLocaleString('es-AR')}`; } } } }, animation: { animateScale: true, duration: 800 } }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '86%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { if(!hasData) return 'Sin datos'; return `${ctx.label}: $${ctx.parsed.toLocaleString('es-AR')}`; } } } }, animation: { animateScale: true, duration: 800 } }
             });
         }
 
@@ -1660,19 +1658,35 @@
 
         let confirmActionCallback = null;
         window.showConfirm = (msg, callback, options = {}) => {
-            const defaults = { title: '¿Estás seguro?', btnText: 'Sí, borrar', btnColor: 'bg-rose-500', btnShadow: 'shadow-rose-200', iconBg: 'bg-rose-100', iconColor: 'text-rose-600', icon: 'fa-triangle-exclamation' };
+            const defaults = {
+                title: '¿Estás seguro?',
+                btnText: 'Sí, borrar',
+                btnColor: 'bg-rose-500',
+                btnShadow: 'shadow-rose-200',
+                iconBg: 'bg-rose-100',
+                iconColor: 'text-rose-600',
+                icon: 'fa-triangle-exclamation'
+            };
             const config = { ...defaults, ...options };
 
-            document.getElementById('confirm-title').innerText = config.title; document.getElementById('confirm-msg').innerText = msg;
+            document.getElementById('confirm-title').innerText = config.title;
+            document.getElementById('confirm-msg').innerText = msg;
             
             const btnOk = document.getElementById('btn-confirm-ok');
-            btnOk.innerText = config.btnText; btnOk.className = `flex-1 py-3 text-white rounded-xl font-bold shadow-md transition hover:opacity-90 outline-none ${config.btnColor} ${config.btnShadow}`;
-            document.getElementById('confirm-icon-bg').className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${config.iconBg} ${config.iconColor}`;
-            document.getElementById('confirm-icon').className = `fa-solid ${config.icon} text-2xl`;
+            btnOk.innerText = config.btnText;
+            btnOk.className = `flex-1 py-3 text-white rounded-xl font-bold shadow-md transition hover:opacity-90 ${config.btnColor} ${config.btnShadow} outline-none`;
+            
+            const iconBgEl = document.getElementById('confirm-icon-bg');
+            iconBgEl.className = `w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 ${config.iconBg} ${config.iconColor}`;
+            
+            const iconEl = document.getElementById('confirm-icon');
+            iconEl.className = `fa-solid ${config.icon} text-2xl`;
 
             confirmActionCallback = callback;
-            const modal = document.getElementById('modal-confirm'); const content = document.getElementById('modal-confirm-content');
-            modal.classList.remove('hidden'); setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+            const modal = document.getElementById('modal-confirm');
+            const content = document.getElementById('modal-confirm-content');
+            modal.classList.remove('hidden');
+            setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
         }
         document.getElementById('btn-confirm-cancel').onclick = () => window.closeModal('modal-confirm');
         document.getElementById('btn-confirm-ok').onclick = () => { if(confirmActionCallback) confirmActionCallback(); window.closeModal('modal-confirm'); }
@@ -1949,7 +1963,7 @@
                 }
                 
                 if (fe.type === 'credit' && fe.currentInstallment <= fe.installments) {
-                    fe.currentInstallment += 1; // Avanzamos a la siguiente cuota para el nuevo mes
+                    fe.currentInstallment += 1; 
                 }
             }
             
