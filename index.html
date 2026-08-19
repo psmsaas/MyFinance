@@ -34,7 +34,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         :root {
-            /* TEMA POR DEFECTO (Claro) */
             --brand-50: #f5f3ff; --brand-100: #ede9fe; --brand-200: #ddd6fe; --brand-300: #c4b5fd;
             --brand-400: #a78bfa; --brand-500: #8b5cf6; --brand-600: #7c3aed; --brand-700: #6d28d9;
             --brand-800: #5b21b6; --brand-900: #4c1d95;
@@ -44,7 +43,6 @@
         }
 
         .theme-espacial {
-            /* TEMA ESPACIAL (Oscuro) */
             --brand-50: #1c1b39; --brand-100: #2e2661; --brand-200: #4a3e85; --brand-300: #6350a3;
             --brand-400: #7f569f; --brand-500: #7f569f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
@@ -54,7 +52,6 @@
         }
 
         .theme-kwai {
-            /* TEMA KWAI (Pastel) */
             --brand-50: #fdf2f8; --brand-100: #fce7f3; --brand-200: #fbcfe8; --brand-300: #f9a8d4;
             --brand-400: #f4abcc; --brand-500: #7f579f; --brand-600: #6a4687; --brand-700: #54366e;
             --brand-800: #3f2756; --brand-900: #2e1a40;
@@ -85,7 +82,7 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* Estrellas Animadas (Tema Espacial) */
+        /* Estrellas y Burbujas */
         .stars-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; overflow: hidden; z-index: 1; display: none; 
@@ -100,7 +97,6 @@
             100% { opacity: var(--max-opacity); transform: scale(1); box-shadow: 0 0 8px rgba(255,255,255,0.8); }
         }
 
-        /* Burbujas Animadas (Tema Kwai) */
         .kawaii-container {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; overflow: hidden; z-index: 1; display: none;
@@ -118,8 +114,9 @@
 
         .modal-bg { background-color: var(--modal-overlay); backdrop-filter: blur(4px); transition: background-color 0.3s; }
 
-        .chart-container { position: relative; width: 260px; height: 260px; margin: 0 auto; }
-        .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 70%; }
+        /* Gráfico ampliado para aprovechar el espacio al máximo */
+        .chart-container { position: relative; width: 350px; height: 350px; max-width: 92vw; max-height: 92vw; margin: 0 auto; }
+        .chart-center-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 70%; z-index: 10; }
 
         .fab-btn { transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s, background-color 0.3s, border-color 0.3s; }
         .fab-btn:active { transform: scale(0.9); }
@@ -135,7 +132,6 @@
         .cat-icon:hover { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
         .cat-icon i { font-size: 1.35rem; }
 
-        /* Dropdown personalizado */
         .custom-select-wrapper { position: relative; user-select: none; }
         .custom-select {
             display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 0.75rem 1rem;
@@ -159,14 +155,11 @@
         .theme-espacial input::placeholder, .theme-espacial textarea::placeholder { color: var(--text-muted); }
         .theme-kwai input, .theme-kwai select, .theme-kwai textarea { border: 1px solid var(--brand-400); }
         
-        #swipe-area {
-            position: fixed; top: 0; right: 0; width: 25px; height: 100vh; z-index: 25; touch-action: none;
-        }
+        #swipe-area { position: fixed; top: 0; right: 0; width: 25px; height: 100vh; z-index: 25; touch-action: none; }
     </style>
 </head>
 <body id="app-body" class="h-[100dvh] w-screen flex items-center justify-center transition-colors duration-300 overflow-hidden bg-surface-main">
 
-    <!-- Hack para iOS Safari: Rellenos de fondo para evitar líneas de colores incorrectos al rebotar -->
     <div class="fixed top-0 left-0 w-full h-[50vh] bg-surface-main z-[-1] transition-colors duration-300 pointer-events-none"></div>
     <div class="fixed bottom-0 left-0 w-full h-[50vh] bg-surface-card z-[-1] transition-colors duration-300 pointer-events-none"></div>
 
@@ -259,7 +252,6 @@
 
         <div id="screen-main" class="absolute inset-0 z-0 bg-surface-main hidden flex flex-col transition-colors duration-300">
             
-            <!-- Fondos Animados -->
             <div class="stars-container" id="stars-layer"></div>
             <div class="kawaii-container" id="kawaii-layer"></div>
 
@@ -267,7 +259,6 @@
             <div class="absolute top-0 left-0 w-full px-5 pt-[max(1rem,env(safe-area-inset-top))] pb-2 flex justify-between items-center z-20 pointer-events-none">
                 <div class="flex items-center gap-3 pointer-events-auto mt-2">
                     <div class="relative custom-select-wrapper w-auto">
-                        <!-- Dropdown de Meses: Logo + Mes -->
                         <div class="flex items-center gap-2 cursor-pointer py-1.5 px-3 rounded-full bg-surface-card/90 backdrop-blur-md shadow-sm border border-surface transition-all hover:scale-105" onclick="toggleMonthSelect()">
                             <img src="logo.png" alt="App" class="w-6 h-6 object-contain drop-shadow-sm" onerror="this.outerHTML='<i class=\'fa-solid fa-wallet text-brand-600 text-sm\'></i>'">
                             <span class="text-xs font-bold text-main flex items-center gap-1" id="current-month-display">
@@ -281,11 +272,11 @@
                     <button id="btn-return-current" onclick="returnToCurrentMonth()" class="hidden text-xs bg-brand-100 text-brand-700 px-3 py-1.5 rounded-full font-bold shadow-sm border border-brand-200 transition-all hover:bg-brand-200">
                         Volver
                     </button>
-                    <!-- BOTÓN DE HISTORIAL -->
-                    <button onclick="openHistoryModal()" class="w-9 h-9 items-center justify-center bg-surface-card/90 backdrop-blur-md text-main hover:text-brand-500 rounded-full border border-surface shadow-sm transition-all hover:scale-105 flex" title="Historial Completo">
+                    <!-- Historial / Balance -->
+                    <button onclick="openHistoryModal()" class="w-9 h-9 items-center justify-center bg-surface-card/90 backdrop-blur-md text-main hover:text-brand-500 rounded-full border border-surface shadow-sm transition-all hover:scale-105 flex" title="Historial y Balance">
                         <i class="fa-solid fa-list-ul text-sm"></i>
                     </button>
-                    <!-- BOTÓN DE AJUSTES (Solo visible en PC) -->
+                    <!-- Ajustes (PC) -->
                     <button onclick="toggleSidebar()" class="hidden sm:flex w-9 h-9 items-center justify-center bg-surface-card/90 backdrop-blur-md text-muted hover:text-brand-500 rounded-full border border-surface shadow-sm transition-all hover:scale-105" title="Abrir Menú">
                         <i class="fa-solid fa-gear text-sm"></i>
                     </button>
@@ -299,13 +290,14 @@
             <main class="flex-1 relative overflow-hidden flex flex-col items-center justify-center z-10 mt-2">
                 <div class="chart-container">
                     <canvas id="mainChart"></canvas>
-                    <div class="chart-center-text flex flex-col items-center justify-center">
-                        <img id="status-logo" src="logo.png" alt="Status" class="w-16 h-16 object-contain mb-2 transition-transform duration-500 drop-shadow-md" onerror="this.outerHTML='<i id=\'status-icon\' class=\'fa-solid fa-wallet text-4xl text-brand-300 mb-2 transition-colors duration-500\'></i>'">
+                    <!-- Zona de Trigger de 3 Segundos para Balance -->
+                    <div id="balance-trigger-zone" class="chart-center-text flex flex-col items-center justify-center cursor-pointer group select-none" style="-webkit-touch-callout: none; -webkit-user-select: none;" title="Mantén presionado 3s para Balance">
+                        <img id="status-logo" src="logo.png" alt="Status" class="w-16 h-16 object-contain mb-2 transition-transform duration-500 drop-shadow-md group-hover:scale-110 pointer-events-none" onerror="this.outerHTML='<i id=\'status-icon\' class=\'fa-solid fa-wallet text-4xl text-brand-300 mb-2 transition-colors duration-500 group-hover:scale-110 pointer-events-none\'></i>'">
                         
-                        <div class="text-brand-600 font-bold text-sm">
+                        <div class="text-brand-600 font-bold text-sm pointer-events-none">
                             <span id="total-ingresos" class="block">+$0.00</span>
                         </div>
-                        <div class="text-rose-500 font-bold text-sm mt-1">
+                        <div class="text-rose-500 font-bold text-sm mt-1 pointer-events-none">
                             <span id="total-egresos" class="block">-$0.00</span>
                         </div>
                     </div>
@@ -313,7 +305,7 @@
                 </div>
             </main>
 
-            <!-- BARRA INFERIOR MINIMALISTA -->
+            <!-- BARRA INFERIOR -->
             <div class="bg-surface-card pt-4 pb-[max(1rem,calc(1rem+env(safe-area-inset-bottom)))] rounded-t-[2.5rem] shadow-[0_-10px_25px_-5px_rgba(0,0,0,0.05)] z-20 border-t border-surface relative transition-colors duration-300">
                 <div class="flex justify-center mb-3">
                     <div id="balance-badge" class="bg-surface-main text-main px-6 py-2 rounded-full font-bold text-lg shadow-sm border border-surface transition-colors duration-500">
@@ -321,7 +313,6 @@
                     </div>
                 </div>
                 
-                <!-- METAS COMPACTAS LADO A LADO -->
                 <div class="grid grid-cols-2 gap-6 px-10 mb-4">
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-between text-[9px] font-bold text-muted uppercase tracking-wider">
@@ -341,18 +332,17 @@
                     </div>
                 </div>
                 
-                <!-- BOTONES DE ACCIÓN REDUCIDOS CON GLOW CENTRAL -->
                 <div class="flex justify-between px-10 items-center relative">
                     <button id="btn-expense" onclick="if(!endMonthTriggered) openTransactionModal('expense')" class="fab-btn w-14 h-14 rounded-full bg-surface-card border-[3px] border-rose-400 text-rose-500 text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(244,63,94,0.4)] z-10 select-none outline-none focus:outline-none">
-                        <i class="fa-solid fa-minus"></i>
+                        <i class="fa-solid fa-minus pointer-events-none"></i>
                     </button>
                     
                     <button onclick="openGoalsModal()" id="btn-goals" class="fab-btn w-10 h-10 rounded-full bg-brand-50 text-brand-600 flex items-center justify-center shadow-md border border-brand-100 z-10 outline-none focus:outline-none" title="Editar Metas">
-                        <i class="fa-solid fa-bullseye text-sm"></i>
+                        <i class="fa-solid fa-bullseye text-sm pointer-events-none"></i>
                     </button>
 
                     <button id="btn-income" onclick="if(!endMonthTriggered) openTransactionModal('income')" class="fab-btn w-14 h-14 rounded-full bg-surface-card border-[3px] border-emerald-400 text-emerald-500 text-2xl flex items-center justify-center shadow-[0_0_20px_rgba(16,185,129,0.4)] z-10 select-none outline-none focus:outline-none">
-                        <i class="fa-solid fa-plus"></i>
+                        <i class="fa-solid fa-plus pointer-events-none"></i>
                     </button>
                 </div>
             </div>
@@ -399,15 +389,6 @@
                         <ul id="sidebar-fixed-list" class="space-y-2"></ul>
                     </div>
 
-                    <!-- Sugerencias / Feedback -->
-                    <div class="bg-surface-main p-4 rounded-2xl border border-surface">
-                        <h3 class="font-bold text-amber-500 flex items-center gap-2 mb-2"><i class="fa-solid fa-lightbulb"></i> Sugerencias</h3>
-                        <p class="text-[11px] text-muted mb-3 leading-tight">¿Encontraste un error o quieres un nuevo tema/función?</p>
-                        <button onclick="openFeedbackModal('suggestion')" class="w-full py-2.5 bg-amber-100 text-amber-700 font-bold rounded-xl hover:bg-amber-200 transition text-sm flex justify-center items-center gap-2">
-                            <i class="fa-solid fa-paper-plane"></i> Enviar Mensaje
-                        </button>
-                    </div>
-
                     <div>
                         <div class="flex justify-between items-center mb-3 px-1">
                             <h3 class="font-bold text-main flex items-center gap-2"><i class="fa-solid fa-arrow-trend-down text-rose-500"></i> Categorías Gasto</h3>
@@ -424,11 +405,61 @@
                         <ul id="sidebar-income-list" class="space-y-2"></ul>
                     </div>
                     
-                    <div class="pt-4 border-t border-surface">
+                    <div class="pt-4 border-t border-surface space-y-3">
+                        <button onclick="openFeedbackModal('suggestion')" class="w-full py-3 bg-amber-50 text-amber-600 font-bold rounded-xl hover:bg-amber-100 transition flex items-center justify-center gap-2 border border-amber-100">
+                            <i class="fa-solid fa-lightbulb"></i> Enviar Sugerencia o Idea
+                        </button>
+                        <button onclick="openFeedbackModal('theme')" class="w-full py-3 bg-brand-50 text-brand-600 font-bold rounded-xl hover:bg-brand-100 transition flex items-center justify-center gap-2 border border-brand-100">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Solicitar Nuevo Tema
+                        </button>
                         <button onclick="logout()" class="w-full py-3 bg-surface-main text-rose-500 font-bold rounded-xl hover:bg-rose-100 hover:text-rose-600 transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-sign-out-alt"></i> Cerrar Sesión
                         </button>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL: BALANCE Y RESUMEN GENERAL -->
+        <div id="modal-balance" class="absolute inset-0 z-[75] modal-bg hidden flex flex-col justify-end">
+            <div class="bg-surface-card w-full h-[85%] rounded-t-[2.5rem] p-6 transform transition-transform translate-y-full duration-300 flex flex-col shadow-2xl border-t border-surface" id="modal-balance-content">
+                <div class="flex justify-between items-center mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shadow-sm">
+                            <i class="fa-solid fa-chart-pie text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-main leading-none">Menú Balance</h3>
+                            <span class="text-[11px] text-muted uppercase font-bold tracking-wider" id="balance-modal-subtitle">Resumen general</span>
+                        </div>
+                    </div>
+                    <button onclick="closeModal('modal-balance')" class="w-8 h-8 bg-surface-main rounded-full flex items-center justify-center text-muted hover:text-main transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+
+                <div class="flex-1 overflow-y-auto no-scrollbar space-y-4 pb-10">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="bg-surface-main p-4 rounded-2xl border border-surface text-center">
+                            <span class="text-[10px] font-bold text-muted uppercase tracking-wider block">Ingresos del Mes</span>
+                            <span id="balance-modal-income" class="text-lg font-black text-emerald-500 mt-1 block">$0.00</span>
+                        </div>
+                        <div class="bg-surface-main p-4 rounded-2xl border border-surface text-center">
+                            <span class="text-[10px] font-bold text-muted uppercase tracking-wider block">Egresos del Mes</span>
+                            <span id="balance-modal-expense" class="text-lg font-black text-rose-500 mt-1 block">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-surface-main p-5 rounded-2xl border border-surface flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-muted uppercase tracking-wider block">Balance Neto del Periodo</span>
+                            <span id="balance-modal-net" class="text-2xl font-black text-main mt-0.5 block">$0.00</span>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-500 text-white flex items-center justify-center shadow-md">
+                            <i class="fa-solid fa-wallet text-xl"></i>
+                        </div>
+                    </div>
+
+                    <h4 class="font-bold text-main text-sm pt-2 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-brand-500"></i> Movimientos Recientes</h4>
+                    <div id="balance-modal-list" class="space-y-2"></div>
                 </div>
             </div>
         </div>
@@ -447,7 +478,7 @@
                         <label class="block text-xs font-bold text-muted uppercase tracking-wider mb-2">Monto</label>
                         <div class="relative">
                             <span class="absolute left-5 top-1/2 -translate-y-1/2 text-muted font-bold text-xl">$</span>
-                            <input type="text" id="trans-amount" inputmode="decimal" required class="w-full pl-10 pr-4 py-4 rounded-2xl bg-surface-main border-0 focus:outline-none transition-colors font-bold text-3xl text-main placeholder-muted" placeholder="0.00" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            <input type="text" inputmode="decimal" id="trans-amount" required class="w-full pl-10 pr-4 py-4 rounded-2xl bg-surface-main border-0 focus:outline-none transition-colors font-bold text-3xl text-main placeholder-muted" placeholder="0,00" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         </div>
                     </div>
                     <div>
@@ -488,13 +519,11 @@
                     <h3 class="text-2xl font-bold text-main">Historial</h3>
                     <button onclick="closeModal('modal-history')" class="w-8 h-8 bg-surface-main rounded-full flex items-center justify-center text-muted hover:text-main"><i class="fa-solid fa-xmark"></i></button>
                 </div>
-                <div class="flex-1 overflow-y-auto no-scrollbar space-y-3" id="history-list">
-                    <!-- Transactions go here -->
-                </div>
+                <div class="flex-1 overflow-y-auto no-scrollbar space-y-3" id="history-list"></div>
             </div>
         </div>
 
-        <!-- MODAL: CATEGORÍA (Crear/Editar) -->
+        <!-- MODAL: CATEGORÍA -->
         <div id="modal-category" class="absolute inset-0 z-[60] modal-bg hidden flex items-center justify-center p-4">
             <div id="modal-category-content" class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200">
                 <h3 class="text-xl font-bold mb-4 text-main" id="cat-modal-title">Nueva Categoría</h3>
@@ -541,14 +570,14 @@
                         <label class="block text-xs font-bold text-muted uppercase mb-1">Límite de Gasto Mensual</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
-                            <input type="text" id="goal-month" inputmode="decimal" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            <input type="text" inputmode="decimal" id="goal-month" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         </div>
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted uppercase mb-1">Meta de Ahorro Anual</label>
                         <div class="relative">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 text-muted font-bold">$</span>
-                            <input type="text" id="goal-year" inputmode="decimal" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            <input type="text" inputmode="decimal" id="goal-year" class="w-full pl-8 pr-4 py-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-brand-500 font-bold text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         </div>
                     </div>
                     <div class="flex gap-3 mt-6">
@@ -576,7 +605,7 @@
                     <div class="grid grid-cols-2 gap-3">
                         <div>
                             <label class="block text-xs font-bold text-muted uppercase mb-1">Monto Mensual</label>
-                            <input type="text" id="fixed-amount" inputmode="decimal" required class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                            <input type="text" inputmode="decimal" id="fixed-amount" required class="w-full p-3 bg-surface-main border-0 rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-muted uppercase mb-1">Vence el día (Opc)</label>
@@ -622,7 +651,7 @@
             </div>
         </div>
 
-        <!-- MODAL: CONFIRMAR ACCION (Dinámico: Borrar o Pagar) -->
+        <!-- MODAL: CONFIRMAR -->
         <div id="modal-confirm" class="absolute inset-0 z-[80] modal-bg hidden flex items-center justify-center p-4">
             <div id="modal-confirm-content" class="bg-surface-card rounded-3xl w-full max-w-xs p-6 shadow-2xl text-center scale-95 transition-transform duration-200">
                 <div id="confirm-icon-bg" class="w-16 h-16 bg-rose-100 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -632,12 +661,12 @@
                 <p id="confirm-msg" class="text-sm text-muted mb-6">Esta acción no se puede deshacer.</p>
                 <div class="flex gap-3">
                     <button id="btn-confirm-cancel" class="flex-1 py-3 bg-surface-main text-muted hover:text-main rounded-xl font-bold">Cancelar</button>
-                    <button id="btn-confirm-ok" class="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold shadow-md shadow-rose-200 hover:opacity-90 transition">Sí, confirmar</button>
+                    <button id="btn-confirm-ok" class="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold shadow-md shadow-rose-200 hover:opacity-90 transition">Sí, borrar</button>
                 </div>
             </div>
         </div>
 
-        <!-- MODAL: SUGERENCIAS / FEEDBACK -->
+        <!-- MODAL: FEEDBACK -->
         <div id="modal-feedback" class="absolute inset-0 z-[70] modal-bg hidden flex items-center justify-center p-4">
             <div id="modal-feedback-content" class="bg-surface-card rounded-3xl w-full max-w-sm p-6 shadow-2xl scale-95 transition-transform duration-200">
                 <div class="flex items-center gap-3 mb-6">
@@ -690,11 +719,11 @@
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted uppercase mb-1">Nueva Meta Mensual (Opcional)</label>
-                        <input type="text" id="end-new-goal" inputmode="decimal" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                        <input type="text" inputmode="decimal" id="end-new-goal" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-muted uppercase mb-1">Ingresar Sueldo Inicial (Opcional)</label>
-                        <input type="text" id="end-new-income" inputmode="decimal" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
+                        <input type="text" inputmode="decimal" id="end-new-income" class="w-full p-3 bg-surface-card border border-surface rounded-xl focus:ring-2 focus:ring-blue-500 font-medium text-main" oninput="this.value = this.value.replace(/[^0-9.,]/g, '')">
                     </div>
                     <div class="flex gap-3 pt-6 relative z-10">
                         <button type="button" onclick="closeModal('modal-end-month')" class="w-1/3 py-3.5 text-main font-bold">Cancelar</button>
@@ -787,13 +816,13 @@
 
         const availableIcons = [
             'fa-house', 'fa-couch', 'fa-bolt', 'fa-wifi', 'fa-droplet', 'fa-fire', 'fa-faucet', 'fa-trash', 'fa-hammer', 'fa-screwdriver', 'fa-plug',
-            'fa-basket-shopping', 'fa-cart-shopping', 'fa-utensils', 'fa-burger', 'fa-pizza-slice', 'fa-apple-whole', 'fa-mug-hot', 'fa-beer-mug-empty', 'fa-bottle-water', 'fa-martini-glass-citrus',
-            'fa-car', 'fa-bus', 'fa-plane', 'fa-train', 'fa-ship', 'fa-motorcycle', 'fa-bicycle', 'fa-gas-pump', 'fa-hotel', 'fa-suitcase', 'fa-passport', 'fa-campground', 'fa-umbrella-beach',
-            'fa-notes-medical', 'fa-pills', 'fa-stethoscope', 'fa-tooth', 'fa-bone', 'fa-heart', 'fa-dumbbell', 'fa-spa', 'fa-scissors',
-            'fa-mobile-screen', 'fa-tv', 'fa-laptop', 'fa-headphones', 'fa-camera', 'fa-gamepad', 'fa-ticket', 'fa-music', 'fa-film', 'fa-book', 'fa-palette',
-            'fa-shirt', 'fa-glasses', 'fa-shoe-prints', 'fa-bag-shopping', 'fa-tag', 'fa-ring', 'fa-gem', 'fa-gift',
-            'fa-child', 'fa-baby-carriage', 'fa-paw', 'fa-cat', 'fa-dog',
-            'fa-graduation-cap', 'fa-money-bill-wave', 'fa-piggy-bank', 'fa-building-columns', 'fa-credit-card', 'fa-coins', 'fa-wallet', 'fa-sack-dollar', 'fa-chart-pie', 'fa-receipt', 'fa-file-invoice-dollar', 'fa-star'
+            'fa-basket-shopping', 'fa-cart-shopping', 'fa-utensils', 'fa-burger', 'fa-pizza-slice', 'fa-apple-whole', 'fa-mug-hot', 'fa-beer-mug-empty', 'fa-bottle-water', 'fa-martini-glass-citrus', 'fa-ice-cream', 'fa-cake-candles',
+            'fa-car', 'fa-bus', 'fa-plane', 'fa-train', 'fa-ship', 'fa-motorcycle', 'fa-bicycle', 'fa-gas-pump', 'fa-hotel', 'fa-suitcase', 'fa-passport', 'fa-campground', 'fa-umbrella-beach', 'fa-ticket',
+            'fa-notes-medical', 'fa-pills', 'fa-stethoscope', 'fa-tooth', 'fa-bone', 'fa-heart', 'fa-dumbbell', 'fa-spa', 'fa-scissors', 'fa-eye',
+            'fa-mobile-screen', 'fa-tv', 'fa-laptop', 'fa-headphones', 'fa-camera', 'fa-gamepad', 'fa-music', 'fa-film', 'fa-book', 'fa-palette', 'fa-microphone',
+            'fa-shirt', 'fa-glasses', 'fa-shoe-prints', 'fa-bag-shopping', 'fa-tag', 'fa-ring', 'fa-gem', 'fa-gift', 'fa-box',
+            'fa-child', 'fa-baby-carriage', 'fa-paw', 'fa-cat', 'fa-dog', 'fa-fish', 'fa-bone', 'fa-horse', 'fa-dove',
+            'fa-graduation-cap', 'fa-money-bill-wave', 'fa-piggy-bank', 'fa-building-columns', 'fa-credit-card', 'fa-coins', 'fa-wallet', 'fa-sack-dollar', 'fa-chart-pie', 'fa-receipt', 'fa-file-invoice-dollar', 'fa-star', 'fa-arrow-trend-up', 'fa-arrow-trend-down'
         ];
         
         const defaultCategories = {
@@ -915,7 +944,7 @@
             });
         }
 
-        /* --- AUTH LOGIN / REGISTER --- */
+        /* --- AUTH --- */
         document.getElementById('form-register').addEventListener('submit', async (e) => {
             e.preventDefault();
             const name = document.getElementById('reg-name').value;
@@ -979,21 +1008,15 @@
 
         window.closeModal = (id) => {
             const modal = document.getElementById(id);
-            if(id === 'modal-transaction' || id === 'modal-history'){
+            if(id === 'modal-transaction' || id === 'modal-history' || id === 'modal-balance'){
                 const content = document.getElementById(id + '-content');
-                if(content) {
-                    content.classList.remove('translate-y-0'); content.classList.add('translate-y-full');
-                }
+                if(content) { content.classList.remove('translate-y-0'); content.classList.add('translate-y-full'); }
                 setTimeout(() => modal.classList.add('hidden'), 300);
             } else if (id === 'modal-category' || id === 'modal-feedback' || id === 'modal-confirm' || id === 'modal-fixed-expense' || id === 'modal-end-month' || id === 'modal-goals') {
                 const content = document.getElementById(id + '-content');
-                if(content) {
-                    content.classList.remove('scale-100'); content.classList.add('scale-95');
-                }
+                if(content) { content.classList.remove('scale-100'); content.classList.add('scale-95'); }
                 setTimeout(() => modal.classList.add('hidden'), 200);
-            } else {
-                modal.classList.add('hidden');
-            }
+            } else { modal.classList.add('hidden'); }
             if(id === 'modal-transaction') window.closeCatSelect();
         }
 
@@ -1007,7 +1030,6 @@
             }
         }
 
-        /* Gesto deslizar para PC y Mobile */
         let touchstartX = 0; let touchendX = 0;
         function checkDirection() {
             if (touchendX < touchstartX - 40) { if (document.getElementById('sidebar').classList.contains('translate-x-full')) toggleSidebar(); }
@@ -1138,14 +1160,18 @@
             currentChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: { labels, datasets: [{ data: dataValues, backgroundColor: backgroundColors, borderWidth: 3, borderColor: getBorderColor(), hoverOffset: 4 }] },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '72%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { if(!hasData) return 'Sin datos'; return `${ctx.label}: $${ctx.parsed.toLocaleString('es-AR')}`; } } } }, animation: { animateScale: true, duration: 800 } }
+                options: { responsive: true, maintainAspectRatio: false, cutout: '74%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx) { if(!hasData) return 'Sin datos'; return `${ctx.label}: $${ctx.parsed.toLocaleString('es-AR')}`; } } } }, animation: { animateScale: true, duration: 800 } }
             });
         }
 
         function renderCategoryRing(categories) {
             const ring = document.getElementById('category-ring'); ring.innerHTML = '';
-            const radius = 150; const center = { x: 130, y: 130 };
             const isReadOnly = window.appState.viewingMonthId !== window.appState.data.currentMonthId;
+
+            // Calculamos radio dinámicamente según ancho de pantalla para que en móviles no se corte
+            const ringWidth = document.querySelector('.chart-container').offsetWidth;
+            const radius = (ringWidth / 2) - 15; // Un poco menos que el borde
+            const center = { x: ringWidth / 2, y: ringWidth / 2 };
 
             categories.forEach((cat, i) => {
                 const angle = (i / categories.length) * (2 * Math.PI) - (Math.PI / 2);
@@ -1173,9 +1199,7 @@
         window.selectCustomOption = (id, name, iconClass, colorClass) => {
             document.getElementById('trans-category').value = id;
             document.getElementById('custom-select-display').innerHTML = `<div class="w-7 h-7 rounded-full bg-surface-main flex items-center justify-center ${colorClass} shadow-sm border border-surface"><i class="fa-solid ${iconClass} text-xs"></i></div><span class="font-bold text-main">${name}</span>`;
-            
-            const catTrigger = document.getElementById('custom-select-trigger');
-            catTrigger.style.borderColor = ''; // Limpia el rojo si lo había
+            document.getElementById('custom-select-trigger').style.borderColor = '';
             window.closeCatSelect();
         }
 
@@ -1186,8 +1210,6 @@
             document.getElementById('trans-category').value = '';
             document.getElementById('ocr-status').classList.add('hidden'); 
             document.getElementById('custom-select-display').innerHTML = '<span class="text-muted font-medium">Selecciona una categoría...</span>';
-            
-            // Limpiar errores visuales
             document.getElementById('custom-select-trigger').style.borderColor = '';
             document.getElementById('trans-amount').style.borderColor = '';
             
@@ -1205,7 +1227,6 @@
             modal.classList.remove('hidden'); void content.offsetWidth; content.classList.remove('translate-y-full'); content.classList.add('translate-y-0');
         }
 
-        /* --- OCR TESSERACT.JS --- */
         window.runOCR = async (input) => {
             if (input.files && input.files[0]) {
                 const status = document.getElementById('ocr-status'); const msg = document.getElementById('ocr-msg');
@@ -1213,23 +1234,24 @@
                 msg.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Leyendo comprobante...';
                 
                 try {
-                    const result = await Tesseract.recognize(input.files[0], 'spa', { logger: m => console.log(m) });
+                    const result = await Tesseract.recognize(input.files[0], 'spa');
                     const text = result.data.text;
                     const regex = /\b\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?\b/g;
                     const matches = text.match(regex);
                     
                     if (matches) {
-                        const numbers = matches.map(m => parseFloat(m.replace(/,/g, '.').replace(/\.(?=.*\.)/g, '')));
+                        const numbers = matches.map(m => parseFloat(m.replace(/\./g, '').replace(',', '.')));
                         const maxMonto = Math.max(...numbers);
                         if(maxMonto > 0) {
-                            document.getElementById('trans-amount').value = maxMonto.toFixed(2).replace('.', ','); // Se muestra con coma para el usuario
+                            document.getElementById('trans-amount').value = maxMonto.toFixed(2).replace('.', ',');
                             document.getElementById('trans-amount').style.borderColor = '';
                             msg.innerHTML = '<i class="fa-solid fa-bolt"></i> ¡Monto detectado!';
+                            msg.className = 'text-brand-500 font-bold mt-1 block';
                         } else throw new Error();
                     } else throw new Error();
                 } catch (e) {
-                    msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-amber-500"></i> No se encontró monto claro. Ingresa manual.';
-                    msg.classList.replace('text-brand-500', 'text-amber-500');
+                    msg.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> No se encontró monto claro. Ingresa manual.';
+                    msg.className = 'text-amber-500 font-bold mt-1 block';
                 }
             }
         }
@@ -1246,6 +1268,7 @@
             }
 
             const rawAmount = document.getElementById('trans-amount').value;
+            // Ignoramos todos los puntos y convertimos la coma a un punto decimal
             const parsedAmount = parseFloat(rawAmount.replace(/\./g, '').replace(',', '.')) || 0;
             
             if (parsedAmount <= 0) {
@@ -1257,7 +1280,6 @@
 
             const type = document.getElementById('trans-type').value;
             const categoryDef = window.appState.data.categories[type].find(c => c.id === catId);
-            
             const btn = document.getElementById('btn-save-trans'); const origText = btn.innerText; btn.innerText = 'Guardando...';
 
             try {
@@ -1269,10 +1291,66 @@
             } catch (err) { window.showToast('Error al guardar en la nube', 'error'); } finally { btn.innerText = origText; }
         });
 
-        /* --- HISTORIAL MODAL --- */
+        /* --- MENÚ BALANCE & HISTORIAL --- */
+        window.openBalanceModal = () => {
+            const viewingMonth = window.appState.viewingMonthId || window.appState.data.currentMonthId;
+            document.getElementById('balance-modal-subtitle').innerText = `Ciclo: ${formatMonthName(viewingMonth)}`;
+
+            let income = 0; let expense = 0;
+            const monthTrans = window.appState.transactions
+                .filter(t => t.monthId === viewingMonth)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            monthTrans.forEach(t => {
+                if(t.type === 'income') income += t.amount;
+                else expense += t.amount;
+            });
+
+            const fmt = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
+            document.getElementById('balance-modal-income').innerText = `+${fmt.format(income)}`;
+            document.getElementById('balance-modal-expense').innerText = `-${fmt.format(expense)}`;
+            
+            const net = income - expense;
+            const netEl = document.getElementById('balance-modal-net');
+            netEl.innerText = fmt.format(net);
+            netEl.className = `text-2xl font-black mt-0.5 block ${net >= 0 ? 'text-emerald-500' : 'text-rose-500'}`;
+
+            const list = document.getElementById('balance-modal-list'); list.innerHTML = '';
+            if(monthTrans.length === 0) {
+                list.innerHTML = '<div class="text-center text-muted py-6"><i class="fa-solid fa-receipt text-3xl mb-2 opacity-40"></i><p class="text-xs">Sin movimientos en este periodo</p></div>';
+            } else {
+                monthTrans.slice(0, 10).forEach(t => {
+                    const isInc = t.type === 'income';
+                    const catDef = window.appState.data.categories[t.type]?.find(c => c.id === t.categoryId);
+                    const color = catDef ? catDef.color : 'text-slate-500';
+                    const icon = catDef ? catDef.icon : (isInc ? 'fa-arrow-up' : 'fa-arrow-down');
+                    const dateStr = new Date(t.date).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' });
+
+                    list.insertAdjacentHTML('beforeend', `
+                        <div class="flex justify-between items-center bg-surface-main p-3 rounded-xl border border-surface">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-surface-card flex items-center justify-center ${color} shadow-sm border border-surface">
+                                    <i class="fa-solid ${icon} text-xs"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-main text-xs block">${t.categoryName}</span>
+                                    <span class="text-[9px] text-muted">${dateStr} ${t.note ? '• ' + t.note : ''}</span>
+                                </div>
+                            </div>
+                            <span class="font-black text-xs ${isInc ? 'text-emerald-500' : 'text-rose-500'}">
+                                ${isInc ? '+' : '-'}${fmt.format(t.amount)}
+                            </span>
+                        </div>
+                    `);
+                });
+            }
+
+            const modal = document.getElementById('modal-balance'); const content = document.getElementById('modal-balance-content');
+            modal.classList.remove('hidden'); void content.offsetWidth; content.classList.remove('translate-y-full'); content.classList.add('translate-y-0');
+        }
+
         window.openHistoryModal = () => {
             const list = document.getElementById('history-list'); list.innerHTML = '';
-            
             const monthTrans = window.appState.transactions
                 .filter(t => t.monthId === window.appState.viewingMonthId)
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -1289,8 +1367,7 @@
                     else if (t.categoryId.startsWith('fixed_')) { color = 'text-blue-500'; icon = 'fa-anchor'; }
                     else if (t.categoryId === 'rollover') { color = 'text-brand-500'; icon = 'fa-arrow-right-arrow-left'; }
                     
-                    const dateObj = new Date(t.date);
-                    const dateStr = dateObj.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+                    const dateStr = new Date(t.date).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
 
                     list.insertAdjacentHTML('beforeend', `
                         <div class="flex justify-between items-center bg-surface-main p-4 rounded-2xl border border-surface">
@@ -1325,7 +1402,7 @@
                     window.showToast('Movimiento eliminado', 'info');
                     window.openHistoryModal(); 
                 } catch(e) { window.showToast('Error al eliminar', 'error'); }
-            }, { title: 'Eliminar Movimiento', btnText: 'Sí, borrar', icon: 'fa-trash-can' });
+            });
         }
 
         function setupIconSelectors() {
@@ -1481,63 +1558,6 @@
             });
         }
 
-        window.openFeedbackModal = (type) => {
-            document.getElementById('form-feedback').reset(); document.getElementById('feedback-image-base64').value = '';
-            document.getElementById('feedback-img-label').innerText = 'Seleccionar imagen...'; document.getElementById('feedback-type').value = type;
-            document.getElementById('feedback-title').innerText = type === 'theme' ? 'Solicitar Tema' : 'Buzón de Sugerencias';
-            document.getElementById('feedback-icon-container').className = `w-12 h-12 rounded-full flex items-center justify-center ${type === 'theme' ? 'bg-brand-100 text-brand-600' : 'bg-amber-100 text-amber-600'}`;
-            document.getElementById('feedback-icon').className = `fa-solid ${type === 'theme' ? 'fa-wand-magic-sparkles' : 'fa-lightbulb'} text-xl`;
-            
-            const modal = document.getElementById('modal-feedback'); const content = document.getElementById('modal-feedback-content');
-            modal.classList.remove('hidden'); setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
-        }
-
-        window.processFeedbackImage = (input) => {
-            if (input.files && input.files[0]) {
-                const file = input.files[0]; document.getElementById('feedback-img-label').innerText = file.name;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas'); const MAX = 800;
-                        let w = img.width; let h = img.height;
-                        if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
-                        canvas.width = w; canvas.height = h;
-                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-                        document.getElementById('feedback-image-base64').value = canvas.toDataURL('image/jpeg', 0.6);
-                    }
-                    img.src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        document.getElementById('form-feedback').addEventListener('submit', async (e) => {
-            e.preventDefault(); const btn = document.getElementById('btn-send-feedback'); const origText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-            try {
-                await setDoc(doc(collection(db, 'feedback')), {
-                    userId: window.appState.user.uid, userName: window.appState.data.profile?.name || 'Anónimo', userEmail: window.appState.user.email || 'Sin correo',
-                    type: document.getElementById('feedback-type').value, message: document.getElementById('feedback-msg').value,
-                    image: document.getElementById('feedback-image-base64').value || null, date: new Date().toISOString()
-                });
-                window.closeModal('modal-feedback'); window.showToast('¡Mensaje enviado con éxito!', 'success');
-            } catch(e) { window.showToast('Error de conexión. Intenta de nuevo.', 'error'); } finally { btn.innerHTML = origText; }
-        });
-
-        window.openGoalsModal = () => {
-            const data = window.appState.data;
-            document.getElementById('goal-month').value = data.goals.monthly || ''; document.getElementById('goal-year').value = data.goals.annual || '';
-            const modal = document.getElementById('modal-goals'); const content = document.getElementById('modal-goals-content');
-            modal.classList.remove('hidden'); setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
-        }
-        document.getElementById('form-goals').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const rawMonth = document.getElementById('goal-month').value; window.appState.data.goals.monthly = parseFloat(rawMonth.replace(/\./g, '').replace(',', '.')) || 0; 
-            const rawYear = document.getElementById('goal-year').value; window.appState.data.goals.annual = parseFloat(rawYear.replace(/\./g, '').replace(',', '.')) || 0;
-            await saveMainData(); window.closeModal('modal-goals'); window.showToast('Metas actualizadas', 'success');
-        });
-
         window.openFixedExpenseModal = () => {
             document.getElementById('form-fixed-expense').reset(); document.getElementById('fixed-edit-id').value = '';
             document.getElementById('fixed-modal-title').innerText = 'Gasto Fijo'; document.getElementById('fixed-icon-selected').value = 'fa-house';
@@ -1594,7 +1614,6 @@
             await saveMainData(); window.closeModal('modal-fixed-expense'); window.showToast('Gasto fijo guardado', 'success');
         });
 
-        /* --- FINALIZAR MES COMBO --- */
         let touchingPlus = false, touchingMinus = false; window.endMonthTriggered = false;
         function setupComboListeners() {
             const btnMinus = document.getElementById('btn-expense'); const btnPlus = document.getElementById('btn-income');
@@ -1609,7 +1628,101 @@
             btnPlus.addEventListener('touchstart', sPlus, {passive: true}); btnPlus.addEventListener('touchend', ePlus, {passive: true});
             btnMinus.addEventListener('mousedown', sMinus); btnMinus.addEventListener('mouseup', eMinus); btnMinus.addEventListener('mouseleave', eMinus);
             btnPlus.addEventListener('mousedown', sPlus); btnPlus.addEventListener('mouseup', ePlus); btnPlus.addEventListener('mouseleave', ePlus);
+            
+            /* Lógica de 3 segundos para el Menú Balance */
+            const balanceZone = document.getElementById('balance-trigger-zone');
+            let balanceTimer;
+            let pressStartTime = 0;
+            
+            const startBalancePress = () => {
+                pressStartTime = Date.now();
+                balanceTimer = setTimeout(() => {
+                    if (navigator.vibrate) navigator.vibrate([50, 100, 50]); // Vibración al lograr los 3s
+                    window.openBalanceModal();
+                    pressStartTime = 0; // Reiniciar para que no lance el aviso al soltar
+                }, 3000); // 3000 milisegundos = 3 segundos
+            };
+            
+            const cancelBalancePress = () => {
+                clearTimeout(balanceTimer);
+                if (pressStartTime > 0) {
+                    const pressDuration = Date.now() - pressStartTime;
+                    // Si soltó rápido (antes del medio segundo), le mostramos el aviso
+                    if (pressDuration < 500) {
+                        window.showToast('Mantén presionado 3 seg. para abrir Balance', 'info');
+                    }
+                }
+                pressStartTime = 0;
+            };
+
+            if (balanceZone) {
+                balanceZone.addEventListener('touchstart', startBalancePress, {passive: true});
+                balanceZone.addEventListener('touchend', cancelBalancePress);
+                balanceZone.addEventListener('touchcancel', cancelBalancePress);
+                balanceZone.addEventListener('mousedown', startBalancePress);
+                balanceZone.addEventListener('mouseup', cancelBalancePress);
+                balanceZone.addEventListener('mouseleave', cancelBalancePress);
+                // Bloquear el menú de opciones nativo del celular
+                balanceZone.addEventListener('contextmenu', e => { e.preventDefault(); e.stopPropagation(); return false; });
+            }
         }
+
+        window.openGoalsModal = () => {
+            const data = window.appState.data;
+            document.getElementById('goal-month').value = data.goals.monthly || ''; document.getElementById('goal-year').value = data.goals.annual || '';
+            const modal = document.getElementById('modal-goals'); const content = document.getElementById('modal-goals-content');
+            modal.classList.remove('hidden'); setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+        }
+        document.getElementById('form-goals').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const rawMonth = document.getElementById('goal-month').value; window.appState.data.goals.monthly = parseFloat(rawMonth.replace(/\./g, '').replace(',', '.')) || 0; 
+            const rawYear = document.getElementById('goal-year').value; window.appState.data.goals.annual = parseFloat(rawYear.replace(/\./g, '').replace(',', '.')) || 0;
+            await saveMainData(); window.closeModal('modal-goals'); window.showToast('Metas actualizadas', 'success');
+        });
+
+        window.openFeedbackModal = (type) => {
+            document.getElementById('form-feedback').reset(); document.getElementById('feedback-image-base64').value = '';
+            document.getElementById('feedback-img-label').innerText = 'Seleccionar imagen...'; document.getElementById('feedback-type').value = type;
+            document.getElementById('feedback-title').innerText = type === 'theme' ? 'Solicitar Tema' : 'Buzón de Sugerencias';
+            document.getElementById('feedback-icon-container').className = `w-12 h-12 rounded-full flex items-center justify-center ${type === 'theme' ? 'bg-brand-100 text-brand-600' : 'bg-amber-100 text-amber-600'}`;
+            document.getElementById('feedback-icon').className = `fa-solid ${type === 'theme' ? 'fa-wand-magic-sparkles' : 'fa-lightbulb'} text-xl`;
+            
+            const modal = document.getElementById('modal-feedback'); const content = document.getElementById('modal-feedback-content');
+            modal.classList.remove('hidden'); setTimeout(() => { content.classList.remove('scale-95'); content.classList.add('scale-100'); }, 10);
+        }
+
+        window.processFeedbackImage = (input) => {
+            if (input.files && input.files[0]) {
+                const file = input.files[0]; document.getElementById('feedback-img-label').innerText = file.name;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas'); const MAX = 800;
+                        let w = img.width; let h = img.height;
+                        if (w > h && w > MAX) { h *= MAX / w; w = MAX; } else if (h > MAX) { w *= MAX / h; h = MAX; }
+                        canvas.width = w; canvas.height = h;
+                        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                        document.getElementById('feedback-image-base64').value = canvas.toDataURL('image/jpeg', 0.6);
+                    }
+                    img.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        document.getElementById('form-feedback').addEventListener('submit', async (e) => {
+            e.preventDefault(); const btn = document.getElementById('btn-send-feedback'); const origText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            try {
+                await setDoc(doc(collection(db, 'artifacts', appIdStr, 'public', 'data', 'feedback')), {
+                    userId: window.appState.user.uid, userName: window.appState.data.profile?.name || 'Anónimo', userEmail: window.appState.user.email || 'Sin correo',
+                    type: document.getElementById('feedback-type').value, message: document.getElementById('feedback-msg').value,
+                    image: document.getElementById('feedback-image-base64').value || null, date: new Date().toISOString()
+                });
+                window.closeModal('modal-feedback'); window.showToast('¡Mensaje enviado con éxito!', 'success');
+            } catch(e) { window.showToast('Error de conexión. Intenta de nuevo.', 'error'); } finally { btn.innerHTML = origText; }
+        });
 
         function openEndMonthModal() {
             const data = window.appState.data; let bal = 0;
